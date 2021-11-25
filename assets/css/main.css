@@ -623,6 +623,7 @@ input[type="radio"] + label:before {
 
 	.ai:before{
 		font-family: Academicons;
+		text-transform: none !important;
 	}
 		 
 	.icon > .label {
