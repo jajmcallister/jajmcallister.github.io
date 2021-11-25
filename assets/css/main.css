@@ -620,7 +620,7 @@ input[type="radio"] + label:before {
 		font-weight: normal;
 		text-transform: none !important;
 	}
-		 
+
 	.icon > .label {
 		display: none;
 	}
@@ -632,10 +632,14 @@ input[type="radio"] + label:before {
 }
 
 	.ai:before{
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
 		font-family: Academicons;
+		font-style: normal;
+		font-weight: normal;
 		text-transform: none !important;
 	}
-
+	
 	.ai > .label {
 		display: none;
 	}
