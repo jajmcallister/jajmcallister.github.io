@@ -621,13 +621,15 @@ input[type="radio"] + label:before {
 		text-transform: none !important;
 	}
 
+	.ai:before{
+		font-family: Academicons;
+	}
+		 
 	.icon > .label {
 		display: none;
 	}
 
-.ai:before{
-	font-family: Academicons;
-	     }
+
 
 /* This changes what an image looks like */
 .image {
