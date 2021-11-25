@@ -636,7 +636,9 @@ input[type="radio"] + label:before {
 		text-transform: none !important;
 	}
 
-	
+	.ai > .label {
+		display: none;
+	}
 
 /* This changes what an image looks like */
 .image {
