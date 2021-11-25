@@ -620,17 +620,15 @@ input[type="radio"] + label:before {
 		font-weight: normal;
 		text-transform: none !important;
 	}
-
-	.ai:before{
-		font-family: Academicons;
-		text-transform: none !important;
-	}
 		 
 	.icon > .label {
 		display: none;
 	}
 
-
+.ai:before{
+	font-family: Academicons;
+	text-transform: none !important;
+}
 
 /* This changes what an image looks like */
 .image {
