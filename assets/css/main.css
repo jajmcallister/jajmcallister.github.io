@@ -625,10 +625,18 @@ input[type="radio"] + label:before {
 		display: none;
 	}
 
-.ai:before{
-	font-family: Academicons;
-	text-transform: none !important;
+.ai {
+	text-decoration: none;
+	border-bottom: none;
+	position: relative;
 }
+
+	.ai:before{
+		font-family: Academicons;
+		text-transform: none !important;
+	}
+
+	
 
 /* This changes what an image looks like */
 .image {
