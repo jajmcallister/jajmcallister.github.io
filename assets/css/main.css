@@ -644,12 +644,6 @@ input[type="radio"] + label:before {
 		display: none;
 	}
 
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-
 /* This changes what an image looks like */
 .image {
 	border-radius: 4px;
@@ -733,6 +727,15 @@ input[type="radio"] + label:before {
 		}
 
 	}
+
+/* Tables */
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
 
 /* List */
 
