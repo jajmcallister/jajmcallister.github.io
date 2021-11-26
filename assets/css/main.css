@@ -644,6 +644,12 @@ input[type="radio"] + label:before {
 		display: none;
 	}
 
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
 /* This changes what an image looks like */
 .image {
 	border-radius: 4px;
