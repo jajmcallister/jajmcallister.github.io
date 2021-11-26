@@ -737,6 +737,7 @@ input[type="radio"] + label:before {
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
+	width: 80%;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
@@ -957,7 +958,7 @@ ul.icons {
 
 table {
 	margin: 0 0 2rem 0;
-	width: 80%;
+	width: 100%;
 }
 
 	table tbody tr {
