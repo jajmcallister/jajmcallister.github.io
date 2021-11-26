@@ -733,7 +733,8 @@ input[type="radio"] + label:before {
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
-    min-width: 400px;
+    /* min-width: 400px;*/
+	min-width: 300px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
