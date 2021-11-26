@@ -248,6 +248,10 @@ h6 {
 		font-size: 1.25em;
 		line-height: 1.5;
 	}
+	
+	h3 {
+		font-size: 0.9em;
+	}
 
 }
 
@@ -733,9 +737,7 @@ input[type="radio"] + label:before {
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
-    /* min-width: 400px;*/
-	min-width: 200px;
-	max-width: 300px;
+    min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
