@@ -732,23 +732,7 @@ input[type="radio"] + label:before {
 
 	}
 
-/* Tables */
 
-.styled-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-	width: 100%;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-
-table.styled-table-2 {
-    border-collapse: collapse;
-    margin: 25px 0;
-	width: 60%;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
 
 /* List */
 
@@ -1025,6 +1009,23 @@ table {
 			border-top: 0;
 		}
 
+/* Tables */
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+	width: 100%;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+table.styled-table-2 {
+    border-collapse: collapse;
+    margin: 25px 0;
+	width: 60%;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
 /* Button */
 
 input[type="submit"],
