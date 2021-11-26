@@ -957,7 +957,7 @@ ul.icons {
 
 table {
 	margin: 0 0 2rem 0;
-	width: 100%;
+	width: 80%;
 }
 
 	table tbody tr {
@@ -972,7 +972,6 @@ table {
 
 	table td {
 		padding: 0.75em 0.75em;
-		max-width: 150 px;
 	}
 
 	table th {
