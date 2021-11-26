@@ -742,6 +742,14 @@ input[type="radio"] + label:before {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
+table.styled-table-2 {
+    border-collapse: collapse;
+    margin: 25px 0;
+	width: 60%;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
 /* List */
 
 ol {
