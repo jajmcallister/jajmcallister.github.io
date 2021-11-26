@@ -1011,12 +1011,67 @@ table {
 
 /* Tables */
 
-.styled-table {
+table.styled-table {
     border-collapse: collapse;
     margin: 25px 0;
 	width: 100%;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+		table tbody tr {
+		border: solid 1px #ffffff;
+		border-left: 0;
+		border-right: 0;
+	}
+
+		table.styled-table tbody tr:nth-child(2n + 1) {
+			background-color: rgba(255, 255, 255, 0.075);
+		}
+
+	table.styled-table td {
+		padding: 0.75em 0.75em;
+	}
+
+	table.styled-table th {
+		color: #ffffff;
+		font-size: 0.9em;
+		font-weight: 600;
+		padding: 0 0.75em 0.75em 0.75em;
+		text-align: left;
+	}
+
+	table.styled-table thead {
+		border-bottom: solid 2px #ffffff;
+	}
+
+	table.styled-table tfoot {
+		border-top: solid 2px #ffffff;
+	}
+
+	table.styled-table.alt {
+		border-collapse: separate;
+	}
+
+		table.styled-table.alt tbody tr td {
+			border: solid 1px #ffffff;
+			border-left-width: 0;
+			border-top-width: 0;
+		}
+
+			table.styled-table.alt tbody tr td:first-child {
+				border-left-width: 1px;
+			}
+
+		table.styled-table.alt tbody tr:first-child td {
+			border-top-width: 1px;
+		}
+
+		table.styled-table.alt thead {
+			border-bottom: 0;
+		}
+
+		table.styled-table.alt tfoot {
+			border-top: 0;
+		}
 }
 
 table.styled-table-2 {
