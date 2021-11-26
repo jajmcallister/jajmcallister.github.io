@@ -972,6 +972,7 @@ table {
 
 	table td {
 		padding: 0.75em 0.75em;
+		max-width: 150 px;
 	}
 
 	table th {
