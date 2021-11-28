@@ -214,14 +214,26 @@
 							</ul>
 							</p>
 							<p>
-							<b>Project 2.<em>Mechanisms underlying flexible information flow across the brain</em></b><br>
-							To unveil the neural mechanism behind this behavioral outcome the related neural dynamics, 
-							I trained recurrent artificial neural networks to reproduce the heterogeneous activity of recorded neurons in premotor cortex. 
+							<b>Project 2. <em>Neural mechanisms underlying the temporal evolution of flexible information flow across the brain</em></b><br>
+							Sensory information can give rise to different behaviors under distinct circumstances. 
+							To account for this, the brain must dynamically adjust the flow of information between sensory and decision areas.
+							In the context of decision-making, we considered whether and how decisions can be vulnerable to 
+							distracting sensory inputs before they are enacted.
+							We showed that sensory interferences triggered temporally evolving and decision-selective gating of information flow from sensory to motor cortex protects memory
+							from interference during decision-making. 
+							
+							To identify the underlying neural mechanism, I trained recurrent artificial neural networks (RNNs) 
+							to reproduce the activity of recorded neurons
+							in premotor cortex during a binary decision-making task with sensory distractors. 
 							By reverse-engineering the networks, I discovered that decision-related activity patterns 
-							in premotor cortex converged to a pair of stable spike rate patterns – i.e. two discrete attractors, one for each movement. 
-							To correctly reproduce the data, the recurrent network required the presence of 							
-							The findings from this work and from Project 1 led me to challenge a long-standing hypothesis on the role of slow neural timescales observed in preparatory activity,
-							i.e. the brain dynamics occurring before , 
+							in premotor cortex converged to a pair of stable spike rate patterns – i.e. two stable 
+							<em>fixed-points</em> or <em>discrete attractors</em>, one for each decision. 
+							
+							To correctly reproduce the data, the recurrent network required the presence of an external input signalling the passage of time within the trial.							
+							The findings from this work and from Project 1 led me to challenge a long-standing hypothesis 
+							on the role of slow neural timescales observed during decision-making tasks:
+							instead of indicating the formation of a decision, these dynamics reflect the predicted duration of a trial. 
+							Our results provide outlines of a general mechanism underlying flexible routing of information across the brain.
 							
 							<p>
 							<ul>
