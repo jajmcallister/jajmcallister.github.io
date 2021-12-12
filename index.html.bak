@@ -193,8 +193,9 @@
 							</p>
 							<p align="justify">
 							<b>Project 1. <em>How the brain holds on to short-term memory</em></b><br>
-							In this study we designed model-driven optogenetic perturbations
-							in the rodent premotor cortex which allowed us to discriminate between candidate mechanisms of persistent activity. 
+							We designed model-driven optogenetic perturbations
+							in the rodent premotor cortex, which allowed us to discriminate between candidate mechanisms of persistent activity, 
+							the elevated spiking rates observed in single neurons that bridge sensory inputs with subsequent actions. 
 							We first demonstrated that, during short-term memory tasks, cortical activity in rodents is attracted towards a particular 
 							set of spike rate patterns, called discrete attractors, that predict the specific future action.  							
 							</p>
