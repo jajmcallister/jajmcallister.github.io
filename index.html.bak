@@ -27,6 +27,7 @@
 			available. 
 		-->
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://kit.fontawesome.com/682c6219fa.js" crossorigin="anonymous"></script>
 	</head>
 	<!-- The body is the location where your site's content will go -->
 	<body class="is-preload">
