@@ -22,6 +22,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>coffee</title>
     <style>
+	    * {box-sizing: border-box;}
+
+.container {
+  position: relative;
+  width: 50%;
+  max-width: 300px;
+}
+	    
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -48,6 +56,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             padding: 10px;
             color: #fff; /* White text color */
         }
+
+	    
+.overlay {
+  position: absolute; 
+  bottom: 0; 
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.5); /* Black see-through */
+  color: #f1f1f1; 
+  width: 100%;
+  transition: .5s ease;
+  opacity:0;
+  color: white;
+  font-size: 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+.container:hover .overlay {
+  opacity: 1;
+}
         
     </style>
 
@@ -59,6 +87,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
     <h1>coffee</h1>
+
+	<div class="container">
+  <img src="images/pre-wrap.jpg" alt="Avatar" class="image">
+  <div class="overlay">Pre-vinyl wrap</div>
+</div>
+	
 	<img  src="images/coffee1.jpg" width="400">
 	
 	<img  src="images/postwrap.jpg" alt="Description of the image" width="400">
