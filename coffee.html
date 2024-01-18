@@ -21,58 +21,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>coffee</title>
-    <style>
-	    * {box-sizing: border-box;}
-
-.container {
-  position: relative;
-  width: 50%;
-  max-width: 300px;
-}
-	    
-        body {
+    <style>        body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh; /* Ensures the body takes at least the full height of the viewport */
         }
-        h1 {
-            color: #663300;
+        .column {
+            flex: 1; /* Each column takes up equal space */
+            padding: 20px;
+            box-sizing: border-box; /* Include padding and border in the total width */
         }
-        p {
-            line-height: 1.5;
+        .left-column {
+            background-color: #f0f0f0; /* Light gray background for the left column */
         }
-
-	    figure {
-            text-align: center;
+        .right-column {
+            background-color: #e0e0e0; /* Slightly darker gray background for the right column */
         }
-
-	    figcaption {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: rgba(255, 255, 255, 0.7); /* White with some transparency */
-            padding: 10px;
-            color: #fff; /* White text color */
-        }
-
-	    
-.overlay {
-  position: absolute; 
-  bottom: 0; 
-  background: rgb(0, 0, 0);
-  background: rgba(0, 0, 0, 0.5); /* Black see-through */
-  color: #f1f1f1; 
-  width: 100%;
-  transition: .5s ease;
-  opacity:0;
-  color: white;
-  font-size: 20px;
-  padding: 20px;
-  text-align: center;
-}
-
-.container:hover .overlay {
-  opacity: 1;
-}
         
     </style>
 
@@ -85,12 +51,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
     <h1>coffee</h1>
 	
-	<img  src="images/coffee1.jpg" width="400" alt="right">
-	
-	<img  src="images/postwrap.jpg" alt="Description of the image" width="400" alt="right">
-	
-	<img  src="images/pre-wrap.jpg" alt="prewrap" title="Pre vinyl wrap" width="400" alt="right">
-
+  <div class="column left-column">
     <p>
     <b>Brewing methods: </b>
         <br>
@@ -126,5 +87,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <br><br><br><br><br><br>
 	<p><b><u>My Gaggiuino Journey</u></b></p>
+	  </div>
+
+	<div class="column right-column">
+
+	<img  src="images/coffee1.jpg" width="400" alt="right">
+	
+	<img  src="images/postwrap.jpg" alt="Description of the image" width="400" alt="right">
+	
+	<img  src="images/pre-wrap.jpg" alt="prewrap" title="Pre vinyl wrap" width="400" alt="right">
+	</div>
 </body>
 </html>
