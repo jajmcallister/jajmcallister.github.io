@@ -40,16 +40,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             line-height: 1.5;
         }
         .column {
-            flex: 2; /* Each column takes up equal space */
-            padding: 10px;
-            box-sizing: border-box; /* Include padding and border in the total width */
-        }
-        .left-column {
-            background-color: #f0f0f0; /* Light gray background for the left column */
-        }
-        .right-column {
-            background-color: #e0e0e0; /* Slightly darker gray background for the right column */
-        }
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.left-column {
+    flex: 2; /* Takes 2 parts of the available space */
+    background-color: #f0f0f0;
+}
+
+.right-column {
+    flex: 1; /* Takes 1 part of the available space */
+    background-color: #e0e0e0;
+}
+
+.container {
+    display: flex;
+}
         
     </style>
 
@@ -104,7 +111,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 	  <img  src="images/ali.png" alt="Description of the image" width="400" alt="right">
 
 <p><b>Feb 2025:</b> Parts 3D printed by a friend and fellow PhDer. Everything ready...I think.</p>
-	  <img  src="images/gagg/1.jp" alt="Description of the image" width="400" alt="right">
+	  <img  src="images/gagg/1.jpg" alt="Description of the image" width="400" alt="right">
 
 <p> Troublesome wires. Finally connected (very tentatively and sensitively), but all wired up right at least. The screen powers on correctly.</p>
 	  <img  src="images/gagg/2.jpg" alt="Description of the image" width="400" alt="right">
