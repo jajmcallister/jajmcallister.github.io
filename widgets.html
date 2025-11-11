@@ -1,104 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Phase Space Heatmap</title>
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse Population Dynamics Visualisation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .widget {
+            margin-bottom: 50px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .widget h2 {
+            margin-top: 0;
+            color: #444;
+            border-bottom: 2px solid #1b9e77;
+            padding-bottom: 10px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .slider-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1b9e77;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1b9e77;
+            cursor: pointer;
+            border: none;
+        }
+        .value-display {
+            min-width: 50px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+        }
+        #plot1, #plot2 {
+            width: 100%;
+            height: 700px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Synapse Population Dynamics Explorer</h1>
+        <p class="subtitle">Interactive visualisation of immature and mature synapse populations</p>
 
-<div id="sliders" style="margin-bottom:10px;">
-  c: <input id="cSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.4">
-  <span id="cVal">0.4</span>
-  e: <input id="eSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.4">
-  <span id="eVal">0.4</span><br>
-  m: <input id="mSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.2">
-  <span id="mVal">0.2</span>
-  d: <input id="dSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.5">
-  <span id="dVal">0.5</span>
-</div>
+        <!-- Widget 1: Phase Space -->
+        <div class="widget">
+            <h2>1. Phase Space Analysis (Extrema at t > 0)</h2>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>Creation Rate (c):</label>
+                    <div class="slider-container">
+                        <input type="range" id="c1" min="0.1" max="1.5" step="0.05" value="0.4">
+                        <span class="value-display" id="c1-val">0.40</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Elimination Rate (e):</label>
+                    <div class="slider-container">
+                        <input type="range" id="e1" min="0.1" max="1.5" step="0.05" value="0.4">
+                        <span class="value-display" id="e1-val">0.40</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Maturation Rate (m):</label>
+                    <div class="slider-container">
+                        <input type="range" id="m1" min="0.1" max="1.5" step="0.05" value="0.2">
+                        <span class="value-display" id="m1-val">0.20</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Decay Rate (d):</label>
+                    <div class="slider-container">
+                        <input type="range" id="d1" min="0.1" max="1.5" step="0.05" value="0.5">
+                        <span class="value-display" id="d1-val">0.50</span>
+                    </div>
+                </div>
+            </div>
+            <div id="plot1"></div>
+        </div>
 
-<div id="heatmap"></div>
+        <!-- Widget 2: Time Series -->
+        <div class="widget">
+            <h2>2. Population Dynamics Time Series</h2>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>Creation Rate (c):</label>
+                    <div class="slider-container">
+                        <input type="range" id="c2" min="0.1" max="1.5" step="0.05" value="0.4">
+                        <span class="value-display" id="c2-val">0.40</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Elimination Rate (e):</label>
+                    <div class="slider-container">
+                        <input type="range" id="e2" min="0.1" max="1.5" step="0.05" value="0.4">
+                        <span class="value-display" id="e2-val">0.40</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Maturation Rate (m):</label>
+                    <div class="slider-container">
+                        <input type="range" id="m2" min="0.1" max="1.5" step="0.05" value="0.2">
+                        <span class="value-display" id="m2-val">0.20</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Decay Rate (d):</label>
+                    <div class="slider-container">
+                        <input type="range" id="d2" min="0.1" max="1.5" step="0.05" value="0.5">
+                        <span class="value-display" id="d2-val">0.50</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Initial Immature (N<sub>I</sub>(0)):</label>
+                    <div class="slider-container">
+                        <input type="range" id="Ni0" min="0" max="1" step="0.01" value="0">
+                        <span class="value-display" id="Ni0-val">0.00</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <label>Initial Mature (N<sub>M</sub>(0)):</label>
+                    <div class="slider-container">
+                        <input type="range" id="Nm0" min="0" max="1" step="0.01" value="0">
+                        <span class="value-display" id="Nm0-val">0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div id="plot2"></div>
+        </div>
+    </div>
 
-<script>
-const T = 1.0, EPS = 1e-9, N_POINTS = 150;
-const x = Array.from({length: N_POINTS}, (_, i) => i / (N_POINTS - 1));
-const y = Array.from({length: N_POINTS}, (_, i) => i / (N_POINTS - 1));
+    <script>
+        const T = 1.0;
+        const N_POINTS = 150;
+        const EPSILON = 1e-9;
+        const TIME_MAX = 50.0;
+        const TIME_POINTS = 500;
 
-function eig2x2(A,B,C,D){
-  const tr = A + D, det = A*D - B*C;
-  const disc = Math.max(tr*tr - 4*det, 0);
-  const λ1 = 0.5*(tr + Math.sqrt(disc));
-  const λ2 = 0.5*(tr - Math.sqrt(disc));
-  const v1 = [1, (λ1 - A)/B];
-  const v2 = [1, (λ2 - A)/B];
-  return {λ1, λ2, v1, v2};
-}
+        // Matrix operations
+        function solveLinearSystem(A, b) {
+            const n = A.length;
+            const augmented = A.map((row, i) => [...row, b[i]]);
+            
+            for (let i = 0; i < n; i++) {
+                let maxRow = i;
+                for (let k = i + 1; k < n; k++) {
+                    if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
+                        maxRow = k;
+                    }
+                }
+                [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
+                
+                if (Math.abs(augmented[i][i]) < EPSILON) return null;
+                
+                for (let k = i + 1; k < n; k++) {
+                    const factor = augmented[k][i] / augmented[i][i];
+                    for (let j = i; j <= n; j++) {
+                        augmented[k][j] -= factor * augmented[i][j];
+                    }
+                }
+            }
+            
+            const x = new Array(n);
+            for (let i = n - 1; i >= 0; i--) {
+                x[i] = augmented[i][n];
+                for (let j = i + 1; j < n; j++) {
+                    x[i] -= augmented[i][j] * x[j];
+                }
+                x[i] /= augmented[i][i];
+            }
+            return x;
+        }
 
-function analyze(c,e,m,d,Ni0,Nm0){
-  if(Ni0 + Nm0 > T + EPS) return 5;
-  const A = -(e+m+c), B = d-c, C = m, D = -d;
-  const {λ1,λ2,v1,v2} = eig2x2(A,B,C,D);
-  if(!isFinite(v1[1]) || !isFinite(v2[1])) return 5;
-  const v12 = v1[1], v22 = v2[1];
-  const W1 = 1 + v12, W2 = 1 + v22;
-  const detADBC = A*D - B*C;
-  if(Math.abs(detADBC)<EPS) return 5;
-  const k1 = -(c*T*D)/detADBC;
-  const k2 = -(c*T*C)/detADBC;
-  const s0k1 = Ni0 - k1, s0k2 = Nm0 - k2;
-  const detV = v12 - v22;
-  if(Math.abs(detV)<EPS) return 5;
-  const c1 = (s0k2 - v22*s0k1)/detV;
-  const c2 = (v12*s0k1 - s0k2)/detV;
-  const S0 = λ1*c1*W1 + λ2*c2*W2;
-  const denom = λ1*c1*W1;
-  let κ = -1;
-  if(Math.abs(denom)>EPS) κ = (-λ2*c2*W2)/denom;
-  const ext = κ > 1 + EPS;
-  if(ext){
-    if(S0>EPS) return 2; // local max
-    if(S0<-EPS) return 4; // local min
-  }
-  if(S0>EPS) return 1;
-  if(S0<-EPS) return 3;
-  const ss = k1 + k2;
-  return (Ni0 + Nm0 > ss + EPS) ? 3 : 1;
-}
+        function eigenDecomposition2x2(A) {
+            const a = A[0][0], b = A[0][1], c = A[1][0], d = A[1][1];
+            const trace = a + d;
+            const det = a * d - b * c;
+            const discriminant = trace * trace - 4 * det;
+            
+            if (discriminant < 0) return null;
+            
+            const sqrtDisc = Math.sqrt(discriminant);
+            let lambda1 = (trace + sqrtDisc) / 2;
+            let lambda2 = (trace - sqrtDisc) / 2;
+            
+            if (lambda2 > lambda1) [lambda1, lambda2] = [lambda2, lambda1];
+            
+            const v1 = [1, Math.abs(b) > EPSILON ? (lambda1 - a) / b : (lambda1 - d) / c];
+            const v2 = [1, Math.abs(b) > EPSILON ? (lambda2 - a) / b : (lambda2 - d) / c];
+            
+            return { lambda1, lambda2, v1, v2 };
+        }
 
-function compute(c,e,m,d){
-  const Z = Array.from({length:N_POINTS}, ()=>Array(N_POINTS).fill(0));
-  for(let i=0;i<N_POINTS;i++){
-    for(let j=0;j<N_POINTS;j++){
-      Z[i][j] = analyze(c,e,m,d,x[j],y[i]);
-    }
-  }
-  return Z;
-}
+        function analyzeExtrema(c, e, m, d, Ni0, Nm0) {
+            if (Ni0 + Nm0 > T + EPSILON) return 5;
+            
+            const A = -(e + m + c);
+            const B = d - c;
+            const C = m;
+            const D = -d;
+            const matrixA = [[A, B], [C, D]];
+            
+            const eigen = eigenDecomposition2x2(matrixA);
+            if (!eigen) return 5;
+            
+            const { lambda1, lambda2, v1, v2 } = eigen;
+            const v12 = v1[1];
+            const v22 = v2[1];
+            const W1 = 1 + v12;
+            const W2 = 1 + v22;
+            
+            const bVec = [c * T, 0];
+            const k = solveLinearSystem(matrixA, bVec.map(x => -x));
+            if (!k) return 5;
+            
+            const [k1, k2] = k;
+            const s0MinusK = [Ni0 - k1, Nm0 - k2];
+            const VMatrix = [[1, 1], [v12, v22]];
+            const cCoeffs = solveLinearSystem(VMatrix, s0MinusK);
+            if (!cCoeffs) return 5;
+            
+            const [c1, c2] = cCoeffs;
+            const S0 = lambda1 * c1 * W1 + lambda2 * c2 * W2;
+            const denominator = lambda1 * c1 * W1;
+            
+            let kappa = -1;
+            if (Math.abs(denominator) > EPSILON) {
+                kappa = (-lambda2 * c2 * W2) / denominator;
+            }
+            
+            const extremumExists = kappa > 1.0 + EPSILON;
+            
+            if (extremumExists) {
+                if (S0 > EPSILON) return 2;
+                if (S0 < -EPSILON) return 4;
+            }
+            
+            if (S0 > EPSILON) return 1;
+            if (S0 < -EPSILON) return 3;
+            
+            const ssCombined = k1 + k2;
+            const currentCombined = Ni0 + Nm0;
+            return currentCombined > ssCombined + EPSILON ? 3 : 1;
+        }
 
-function update(){
-  const c=parseFloat(cSlider.value), e=parseFloat(eSlider.value),
-        m=parseFloat(mSlider.value), d=parseFloat(dSlider.value);
-  cVal.textContent=c.toFixed(2);
-  eVal.textContent=e.toFixed(2);
-  mVal.textContent=m.toFixed(2);
-  dVal.textContent=d.toFixed(2);
-  const Z=compute(c,e,m,d);
-  const colors=['#1b9e77','#d95f02','#e7298a','#7570b3','#cccccc'];
-  const trace={x:x, y:y, z:Z, type:'heatmap',
-    colorscale: colors.map((c,i)=>[i/4,c]),
-    zmin:1, zmax:5, showscale:false};
-  const line={x:[0,1], y:[1,0], mode:'lines', line:{color:'black',dash:'dash'}};
-  Plotly.newPlot('heatmap',[trace,line],{
-    xaxis:{title:'N_I(0)',range:[0,1]},
-    yaxis:{title:'N_M(0)',range:[0,1]},
-    title:`Phase space for c=${c}, e=${e}, m=${m}, d=${d}`,
-    width:600, height:600
-  });
-}
+        function plotPhaseSpace(c, e, m, d) {
+            const z = [];
+            for (let i = 0; i < N_POINTS; i++) {
+                const row = [];
+                const Nm0 = i / (N_POINTS - 1);
+                for (let j = 0; j < N_POINTS; j++) {
+                    const Ni0 = j / (N_POINTS - 1);
+                    row.push(analyzeExtrema(c, e, m, d, Ni0, Nm0));
+                }
+                z.push(row);
+            }
+            
+            const colors = ['#1b9e77', '#d95f02', '#e7298a', '#7570b3', '#cccccc'];
+            const colorscale = [
+                [0, colors[0]], [0.2, colors[0]],
+                [0.2, colors[1]], [0.4, colors[1]],
+                [0.4, colors[2]], [0.6, colors[2]],
+                [0.6, colors[3]], [0.8, colors[3]],
+                [0.8, colors[4]], [1, colors[4]]
+            ];
+            
+            const trace1 = {
+                z: z,
+                x: Array.from({length: N_POINTS}, (_, i) => i / (N_POINTS - 1)),
+                y: Array.from({length: N_POINTS}, (_, i) => i / (N_POINTS - 1)),
+                type: 'heatmap',
+                colorscale: colorscale,
+                showscale: false,
+                zmin: 1,
+                zmax: 5
+            };
+            
+            const trace2 = {
+                x: [0, T],
+                y: [T, 0],
+                mode: 'lines',
+                line: { color: 'black', width: 2, dash: 'dash' },
+                name: 'Physical Limit (N<sub>I</sub>+N<sub>M</sub>=T)',
+                showlegend: true
+            };
+            
+            const layout = {
+                title: `Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)} (Extrema at t>0)`,
+                xaxis: { title: 'N<sub>I</sub>(0)', range: [0, T] },
+                yaxis: { title: 'N<sub>M</sub>(0)', range: [0, T], scaleanchor: 'x' },
+                width: 900,
+                height: 700,
+                annotations: [
+                    { x: 0.15, y: 0.95, xref: 'paper', yref: 'paper', text: '1. Monotonically Increasing', showarrow: false, bgcolor: colors[0], font: {color: 'white', size: 10}, borderpad: 4 },
+                    { x: 0.15, y: 0.88, xref: 'paper', yref: 'paper', text: '2. Local Maximum', showarrow: false, bgcolor: colors[1], font: {color: 'white', size: 10}, borderpad: 4 },
+                    { x: 0.15, y: 0.81, xref: 'paper', yref: 'paper', text: '3. Monotonically Decreasing', showarrow: false, bgcolor: colors[2], font: {color: 'white', size: 10}, borderpad: 4 },
+                    { x: 0.15, y: 0.74, xref: 'paper', yref: 'paper', text: '4. Local Minimum', showarrow: false, bgcolor: colors[3], font: {color: 'white', size: 10}, borderpad: 4 },
+                    { x: 0.15, y: 0.67, xref: 'paper', yref: 'paper', text: '5. Not possible (combined population bounded)', showarrow: false, bgcolor: colors[4], font: {color: 'black', size: 10}, borderpad: 4 }
+                ]
+            };
+            
+            Plotly.newPlot('plot1', [trace1, trace2], layout);
+        }
 
-[cSlider,eSlider,mSlider,dSlider].forEach(sl=>sl.addEventListener('input',update));
-update();
-</script>
+        function solveODEAnalytical(c, e, m, d, Ni0, Nm0) {
+            const A = -(e + m + c);
+            const B = d - c;
+            const C = m;
+            const D = -d;
+            const matrixA = [[A, B], [C, D]];
+            
+            const eigen = eigenDecomposition2x2(matrixA);
+            if (!eigen) return null;
+            
+            const { lambda1, lambda2, v1, v2 } = eigen;
+            const v12 = v1[1];
+            const v22 = v2[1];
+            
+            const bVec = [c * T, 0];
+            const k = solveLinearSystem(matrixA, bVec.map(x => -x));
+            if (!k) return null;
+            
+            const [k1, k2] = k;
+            const s0MinusK = [Ni0 - k1, Nm0 - k2];
+            const VMatrix = [[1, 1], [v12, v22]];
+            const cCoeffs = solveLinearSystem(VMatrix, s0MinusK);
+            if (!cCoeffs) return null;
+            
+            const [c1, c2] = cCoeffs;
+            
+            const timeArray = Array.from({length: TIME_POINTS}, (_, i) => i * TIME_MAX / (TIME_POINTS - 1));
+            const Ni_t = timeArray.map(t => Math.max(0, Math.min(T, c1 * Math.exp(lambda1 * t) + c2 * Math.exp(lambda2 * t) + k1)));
+            const Nm_t = timeArray.map(t => Math.max(0, Math.min(T, c1 * v12 * Math.exp(lambda1 * t) + c2 * v22 * Math.exp(lambda2 * t) + k2)));
+            const N_Combined = Ni_t.map((ni, i) => ni + Nm_t[i]);
+            const Np_t = N_Combined.map(nc => T - nc);
+            
+            return { timeArray, Ni_t, Nm_t, Np_t, N_Combined, lambda1, lambda2, c1, c2, v12, v22, k1, k2 };
+        }
+
+        function plotTimeSeries(c, e, m, d, Ni0, Nm0) {
+            if (Ni0 + Nm0 > T + EPSILON) {
+                Plotly.newPlot('plot2', [], {
+                    title: 'Error: N<sub>I</sub>(0) + N<sub>M</sub>(0) must be ≤ 1',
+                    annotations: [{ text: 'Initial Condition Violation', x: 0.5, y: 0.5, xref: 'paper', yref: 'paper', showarrow: false, font: {size: 20, color: 'red'} }]
+                });
+                return;
+            }
+            
+            const result = solveODEAnalytical(c, e, m, d, Ni0, Nm0);
+            if (!result) {
+                Plotly.newPlot('plot2', [], {
+                    title: 'Error: Could not find stable analytical solution',
+                    annotations: [{ text: 'Solution Error', x: 0.5, y: 0.5, xref: 'paper', yref: 'paper', showarrow: false, font: {size: 20, color: 'red'} }]
+                });
+                return;
+            }
+            
+            const { timeArray, Ni_t, Nm_t, Np_t, N_Combined, lambda1, lambda2, c1, c2, v12, v22, k1, k2 } = result;
+            
+            const traces = [
+                { x: timeArray, y: Ni_t, name: 'N<sub>I</sub>(t) (Immature)', line: { color: '#1b9e77', width: 2 } },
+                { x: timeArray, y: Nm_t, name: 'N<sub>M</sub>(t) (Mature)', line: { color: '#7570b3', width: 2 } },
+                { x: timeArray, y: N_Combined, name: 'N<sub>I</sub>(t) + N<sub>M</sub>(t)', line: { color: '#d95f02', width: 3, dash: 'dash' } },
+                { x: timeArray, y: Np_t, name: 'N<sub>P</sub>(t) (Potential)', line: { color: '#e7298a', width: 2, dash: 'dot' } }
+            ];
+            
+            const shapes = [
+                { type: 'line', x0: 0, x1: TIME_MAX, y0: k1, y1: k1, line: { color: '#1b9e77', dash: 'dot', width: 1 } },
+                { type: 'line', x0: 0, x1: TIME_MAX, y0: k2, y1: k2, line: { color: '#7570b3', dash: 'dot', width: 1 } },
+                { type: 'line', x0: 0, x1: TIME_MAX, y0: k1+k2, y1: k1+k2, line: { color: '#d95f02', dash: 'dot', width: 1 } }
+            ];
+            
+            const annotations = [];
+            const W1 = 1 + v12;
+            const W2 = 1 + v22;
+            const denominator = lambda1 * c1 * W1;
+            
+            if (Math.abs(denominator) > EPSILON) {
+                const kappa = (-lambda2 * c2 * W2) / denominator;
+                if (kappa > EPSILON && Math.abs(lambda1 - lambda2) > EPSILON) {
+                    const t_ext = Math.log(kappa) / (lambda1 - lambda2);
+                    if (t_ext > EPSILON && t_ext < TIME_MAX) {
+                        const exp1 = Math.exp(lambda1 * t_ext);
+                        const exp2 = Math.exp(lambda2 * t_ext);
+                        const Ni_ext = c1 * exp1 + c2 * exp2 + k1;
+                        const Nm_ext = c1 * v12 * exp1 + c2 * v22 * exp2 + k2;
+                        const P_ext = Ni_ext + Nm_ext;
+                        
+                        if (P_ext > 0 && P_ext < T + EPSILON) {
+                            const S0 = lambda1 * c1 * W1 + lambda2 * c2 * W2;
+                            const extType = S0 > 0 ? 'MAX' : 'MIN';
+                            
+                            traces.push({
+                                x: [t_ext],
+                                y: [P_ext],
+                                mode: 'markers',
+                                marker: { size: 10, color: 'red', line: { color: 'black', width: 2 } },
+                                showlegend: false
+                            });
+                            
+                            annotations.push({
+                                x: t_ext,
+                                y: P_ext,
+                                text: `${extType}:<br>t=${t_ext.toFixed(2)}, P=${P_ext.toFixed(2)}`,
+                                showarrow: true,
+                                arrowhead: 2,
+                                arrowcolor: 'red',
+                                ax: 40,
+                                ay: extType === 'MAX' ? -40 : 40,
+                                bgcolor: 'white',
+                                bordercolor: 'red',
+                                borderwidth: 1
+                            });
+                        }
+                    }
+                }
+            }
+            
+            const layout = {
+                title: `Population Dynamics (c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)})`,
+                xaxis: { title: 'Time (t)', range: [0, TIME_MAX] },
+                yaxis: { title: 'Population Fraction (out of T=1)', range: [-0.05, T + 0.05] },
+                shapes: shapes,
+                annotations: annotations,
+                showlegend: true,
+                legend: { x: 1.05, y: 0.5 },
+                width: 1100,
+                height: 600
+            };
+            
+            Plotly.newPlot('plot2', traces, layout);
+        }
+
+        // Setup sliders
+        function setupSlider(id, callback) {
+            const slider = document.getElementById(id);
+            const display = document.getElementById(id + '-val');
+            slider.addEventListener('input', (e) => {
+                display.textContent = parseFloat(e.target.value).toFixed(2);
+                callback();
+            });
+        }
+
+        function updatePlot1() {
+            const c = parseFloat(document.getElementById('c1').value);
+            const e = parseFloat(document.getElementById('e1').value);
+            const m = parseFloat(document.getElementById('m1').value);
+            const d = parseFloat(document.getElementById('d1').value);
+            plotPhaseSpace(c, e, m, d);
+        }
+
+        function updatePlot2() {
+            const c = parseFloat(document.getElementById('c2').value);
+            const e = parseFloat(document.getElementById('e2').value);
+            const m = parseFloat(document.getElementById('m2').value);
+            const d = parseFloat(document.getElementById('d2').value);
+            const Ni0 = parseFloat(document.getElementById('Ni0').value);
+            const Nm0 = parseFloat(document.getElementById('Nm0').value);
+            plotTimeSeries(c, e, m, d, Ni0, Nm0);
+        }
+
+        setupSlider('c1', updatePlot1);
+        setupSlider('e1', updatePlot1);
+        setupSlider('m1', updatePlot1);
+        setupSlider('d1', updatePlot1);
+
+        setupSlider('c2', updatePlot2);
+        setupSlider('e2', updatePlot2);
+        setupSlider('m2', updatePlot2);
+        setupSlider('d2', updatePlot2);
+        setupSlider('Ni0', updatePlot2);
+        setupSlider('Nm0', updatePlot2);
+
+        // Initial plots
+        updatePlot1();
+        updatePlot2();
+    </script>
 </body>
 </html>
