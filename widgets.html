@@ -2,145 +2,103 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Heatmap Interactive (c,m,e,d)</title>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<style>
-  body { font-family: sans-serif; margin: 30px; }
-  .slider-container { margin-bottom: 10px; }
-  .slider-label { display: inline-block; width: 30px; }
-  input[type=range] { width: 250px; vertical-align: middle; }
-</style>
+<title>Phase Space Heatmap</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body>
 
-<h3>Heatmap of Regions (click to select N<sub>I</sub>(0), N<sub>M</sub>(0))</h3>
-
-<div class="slider-container">
-  <span class="slider-label">c:</span>
-  <input type="range" id="c" min="0" max="1" step="0.05" value="0.5">
-  <span id="c_val">0.5</span>
-</div>
-<div class="slider-container">
-  <span class="slider-label">m:</span>
-  <input type="range" id="m" min="0" max="1" step="0.05" value="0.5">
-  <span id="m_val">0.5</span>
-</div>
-<div class="slider-container">
-  <span class="slider-label">e:</span>
-  <input type="range" id="e" min="0" max="1" step="0.05" value="0.5">
-  <span id="e_val">0.5</span>
-</div>
-<div class="slider-container">
-  <span class="slider-label">d:</span>
-  <input type="range" id="d" min="0" max="1" step="0.05" value="0.5">
-  <span id="d_val">0.5</span>
+<div id="sliders" style="margin-bottom:10px;">
+  c: <input id="cSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.4">
+  <span id="cVal">0.4</span>
+  e: <input id="eSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.4">
+  <span id="eVal">0.4</span><br>
+  m: <input id="mSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.2">
+  <span id="mVal">0.2</span>
+  d: <input id="dSlider" type="range" min="0.1" max="1.5" step="0.05" value="0.5">
+  <span id="dVal">0.5</span>
 </div>
 
-<div id="plot" style="width:700px;height:600px;"></div>
-<p id="clickinfo"></p>
+<div id="heatmap"></div>
 
 <script>
-const N = 100;
-const T = 1.0;
-const EPS = 1e-9;
+const T = 1.0, EPS = 1e-9, N_POINTS = 150;
+const x = Array.from({length: N_POINTS}, (_, i) => i / (N_POINTS - 1));
+const y = Array.from({length: N_POINTS}, (_, i) => i / (N_POINTS - 1));
 
-function analyzeExtrema(c,e,m,d,Ni0,Nm0){
-  if(Ni0 + Nm0 > T + EPS) return 5;
-  const A = -(e+m+c);
-  const B = d - c;
-  const C = m;
-  const D = -d;
-  const tr = A + D;
-  const det = A*D - B*C;
+function eig2x2(A,B,C,D){
+  const tr = A + D, det = A*D - B*C;
   const disc = Math.max(tr*tr - 4*det, 0);
-  const lambda1 = 0.5*(tr + Math.sqrt(disc));
-  const lambda2 = 0.5*(tr - Math.sqrt(disc));
-  if(Math.abs(B) < EPS) return 5;
-  const v12 = (lambda1 - A)/B;
-  const v22 = (lambda2 - A)/B;
-  const W1 = 1 + v12;
-  const W2 = 1 + v22;
-  const k1 = -(c*T*D)/(A*D - B*C);
-  const k2 = -(c*T*C)/(A*D - B*C);
-  const detV = (v12 - v22);
-  if(Math.abs(detV) < EPS) return 5;
-  const s0k1 = Ni0 - k1;
-  const s0k2 = Nm0 - k2;
-  const c1 = (s0k2 - v22*s0k1)/(v12 - v22);
-  const c2 = (v12*s0k1 - s0k2)/(v12 - v22);
-  const S0 = lambda1*c1*W1 + lambda2*c2*W2;
-  const denom = lambda1*c1*W1;
-  let kappa = -1;
-  if(Math.abs(denom) > EPS) kappa = (-lambda2*c2*W2)/denom;
-  const ext_tgt = kappa > 1 + EPS;
-  if(ext_tgt){
-    if(S0 > EPS) return 2;  // local max
-    if(S0 < -EPS) return 4; // local min
-  }
-  if(S0 > EPS) return 1;    // monotonic increase
-  if(S0 < -EPS) return 3;   // monotonic decrease
-  return 1;                 // fallback
+  const λ1 = 0.5*(tr + Math.sqrt(disc));
+  const λ2 = 0.5*(tr - Math.sqrt(disc));
+  const v1 = [1, (λ1 - A)/B];
+  const v2 = [1, (λ2 - A)/B];
+  return {λ1, λ2, v1, v2};
 }
 
-function generateData(c,m,e,d){
-  const x = [...Array(N).keys()].map(i => i/(N-1));
-  const y = [...Array(N).keys()].map(i => i/(N-1));
-  const z = [];
-  for(let j=0;j<N;j++){
-    const row = [];
-    for(let i=0;i<N;i++){
-      row.push(analyzeExtrema(c,e,m,d,x[i],y[j]));
+function analyze(c,e,m,d,Ni0,Nm0){
+  if(Ni0 + Nm0 > T + EPS) return 5;
+  const A = -(e+m+c), B = d-c, C = m, D = -d;
+  const {λ1,λ2,v1,v2} = eig2x2(A,B,C,D);
+  if(!isFinite(v1[1]) || !isFinite(v2[1])) return 5;
+  const v12 = v1[1], v22 = v2[1];
+  const W1 = 1 + v12, W2 = 1 + v22;
+  const detADBC = A*D - B*C;
+  if(Math.abs(detADBC)<EPS) return 5;
+  const k1 = -(c*T*D)/detADBC;
+  const k2 = -(c*T*C)/detADBC;
+  const s0k1 = Ni0 - k1, s0k2 = Nm0 - k2;
+  const detV = v12 - v22;
+  if(Math.abs(detV)<EPS) return 5;
+  const c1 = (s0k2 - v22*s0k1)/detV;
+  const c2 = (v12*s0k1 - s0k2)/detV;
+  const S0 = λ1*c1*W1 + λ2*c2*W2;
+  const denom = λ1*c1*W1;
+  let κ = -1;
+  if(Math.abs(denom)>EPS) κ = (-λ2*c2*W2)/denom;
+  const ext = κ > 1 + EPS;
+  if(ext){
+    if(S0>EPS) return 2; // local max
+    if(S0<-EPS) return 4; // local min
+  }
+  if(S0>EPS) return 1;
+  if(S0<-EPS) return 3;
+  const ss = k1 + k2;
+  return (Ni0 + Nm0 > ss + EPS) ? 3 : 1;
+}
+
+function compute(c,e,m,d){
+  const Z = Array.from({length:N_POINTS}, ()=>Array(N_POINTS).fill(0));
+  for(let i=0;i<N_POINTS;i++){
+    for(let j=0;j<N_POINTS;j++){
+      Z[i][j] = analyze(c,e,m,d,x[j],y[i]);
     }
-    z.push(row);
   }
-  return {x:x, y:y, z:z};
+  return Z;
 }
 
-function updatePlot(){
-  const c = parseFloat(document.getElementById('c').value);
-  const m = parseFloat(document.getElementById('m').value);
-  const e = parseFloat(document.getElementById('e').value);
-  const d = parseFloat(document.getElementById('d').value);
-  document.getElementById('c_val').innerText = c;
-  document.getElementById('m_val').innerText = m;
-  document.getElementById('e_val').innerText = e;
-  document.getElementById('d_val').innerText = d;
-  const data = generateData(c,m,e,d);
-  const trace = {
-    x: data.x,
-    y: data.y,
-    z: data.z,
-    type: 'heatmap',
-    colorscale: [
-      [0.00, '#1b9e77'],  // region 1 (mono-inc)
-      [0.25, '#d95f02'],  // region 2 (max)
-      [0.50, '#e7298a'],  // region 3 (mono-dec)
-      [0.75, '#7570b3'],  // region 4 (min)
-      [1.00, '#cccccc']   // region 5 (nonphysical)
-    ],
-    zmin: 1, zmax: 5,
-    showscale: false
-  };
-  const layout = {
-    title: `Regions for c=${c}, m=${m}, e=${e}, d=${d}`,
-    xaxis: {title: "N_I(0)", range:[0,1]},
-    yaxis: {title: "N_M(0)", range:[0,1], scaleanchor:"x", scaleratio:1}
-  };
-  Plotly.newPlot('plot', [trace], layout);
-  const plot = document.getElementById('plot');
-  plot.on('plotly_click', function(data){
-    const xval = data.points[0].x.toFixed(3);
-    const yval = data.points[0].y.toFixed(3);
-    document.getElementById('clickinfo').innerHTML =
-      `Selected N_I(0) = ${xval}, N_M(0) = ${yval}`;
+function update(){
+  const c=parseFloat(cSlider.value), e=parseFloat(eSlider.value),
+        m=parseFloat(mSlider.value), d=parseFloat(dSlider.value);
+  cVal.textContent=c.toFixed(2);
+  eVal.textContent=e.toFixed(2);
+  mVal.textContent=m.toFixed(2);
+  dVal.textContent=d.toFixed(2);
+  const Z=compute(c,e,m,d);
+  const colors=['#1b9e77','#d95f02','#e7298a','#7570b3','#cccccc'];
+  const trace={x:x, y:y, z:Z, type:'heatmap',
+    colorscale: colors.map((c,i)=>[i/4,c]),
+    zmin:1, zmax:5, showscale:false};
+  const line={x:[0,1], y:[1,0], mode:'lines', line:{color:'black',dash:'dash'}};
+  Plotly.newPlot('heatmap',[trace,line],{
+    xaxis:{title:'N_I(0)',range:[0,1]},
+    yaxis:{title:'N_M(0)',range:[0,1]},
+    title:`Phase space for c=${c}, e=${e}, m=${m}, d=${d}`,
+    width:600, height:600
   });
 }
 
-['c','m','e','d'].forEach(id =>
-  document.getElementById(id).addEventListener('input', updatePlot)
-);
-updatePlot();
+[cSlider,eSlider,mSlider,dSlider].forEach(sl=>sl.addEventListener('input',update));
+update();
 </script>
-
 </body>
 </html>
