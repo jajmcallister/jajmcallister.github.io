@@ -82,7 +82,7 @@ input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;b
 </div>
 
 <script>
-const T=1.0,N_POINTS=150,EPSILON=1e-9,TIME_MAX=50.0,TIME_POINTS=500;
+const T=1.0,N_POINTS=500,EPSILON=1e-9,TIME_MAX=50.0,TIME_POINTS=500;
 
 function solveLinearSystem(A,b){const n=A.length;const aug=A.map((r,i)=>[...r,b[i]]);for(let i=0;i<n;i++){let max=i;for(let k=i+1;k<n;k++){if(Math.abs(aug[k][i])>Math.abs(aug[max][i]))max=k;}[aug[i],aug[max]]=[aug[max],aug[i]];if(Math.abs(aug[i][i])<EPSILON)return null;for(let k=i+1;k<n;k++){const f=aug[k][i]/aug[i][i];for(let j=i;j<=n;j++)aug[k][j]-=f*aug[i][j];}}const x=new Array(n);for(let i=n-1;i>=0;i--){x[i]=aug[i][n];for(let j=i+1;j<n;j++)x[i]-=aug[i][j]*x[j];x[i]/=aug[i][i];}return x;}
 function eigenDecomposition2x2(A){const[a,b,c,d]=[A[0][0],A[0][1],A[1][0],A[1][1]];const tr=a+d,det=a*d-b*c,disc=tr*tr-4*det;if(disc<0)return null;const s=Math.sqrt(disc);let l1=(tr+s)/2,l2=(tr-s)/2;if(l2>l1)[l1,l2]=[l2,l1];const v1=[1,Math.abs(b)>EPSILON?(l1-a)/b:(l1-d)/c];const v2=[1,Math.abs(b)>EPSILON?(l2-a)/b:(l2-d)/c];return{lambda1:l1,lambda2:l2,v1,v2};}
