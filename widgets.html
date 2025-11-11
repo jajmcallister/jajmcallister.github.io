@@ -132,10 +132,10 @@ function plotPhaseSpace(c, e, m, d) {
 
   // --- Legend traces (invisible points, for labeling) ---
   const legendTraces = [
-    { name: 'Monotonically Increasing', marker: { color: colors[0] }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
-    { name: 'Local Maximum', marker: { color: colors[1] }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
-    { name: 'Monotonically Decreasing', marker: { color: colors[2] }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
-    { name: 'Local Minimum', marker: { color: colors[3] }, mode: 'markers', x: [null], y: [null], type: 'scatter' }
+    { name: 'Monotonically Increasing', marker: { color: colors[0], size: 12 }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
+    { name: 'Local Maximum', marker: { color: colors[1], size: 12 }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
+    { name: 'Monotonically Decreasing', marker: { color: colors[2], size: 12 }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
+    { name: 'Local Minimum', marker: { color: colors[3], size: 12 }, mode: 'markers', x: [null], y: [null], type: 'scatter' }
   ];
 
   const layout = {
