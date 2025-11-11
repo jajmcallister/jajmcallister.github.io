@@ -350,21 +350,51 @@
                 name: 'Physical Limit (N<sub>I</sub>+N<sub>M</sub>=T)',
                 showlegend: true
             };
+
+            // Assuming colors array is defined outside this scope.
+// Example: const colors = ['#1b9e77', '#d95f02', '#e7298a', '#7570b3', '#cccccc']; 
+
+const layout = {
+    title: `Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)} (Extrema at t>0)`,
+    xaxis: { title: 'N<sub>I</sub>(0)', range: [0, T] },
+    yaxis: { title: 'N<sub>M</sub>(0)', range: [0, T], scaleanchor: 'x' },
+    width: 900,
+    height: 700,
+    annotations: [
+        // Title/Header for the legend
+        { x: 1.0, y: 1.0, xref: 'paper', yref: 'paper', text: 'Combined Population Behavior', showarrow: false, font: {size: 11, weight: 'bold'}, xanchor: 'right', yanchor: 'top', yshift: 5 }, 
+        
+        // 1. Monotonically Increasing (Topmost item)
+        { x: 1.0, y: 0.95, xref: 'paper', yref: 'paper', text: '1. Monotonically Increasing', showarrow: false, bgcolor: colors[0], font: {color: 'white', size: 10}, borderpad: 4, xanchor: 'right' },
+        
+        // 2. Local Maximum
+        { x: 1.0, y: 0.89, xref: 'paper', yref: 'paper', text: '2. Local Maximum', showarrow: false, bgcolor: colors[1], font: {color: 'white', size: 10}, borderpad: 4, xanchor: 'right' },
+        
+        // 3. Monotonically Decreasing
+        { x: 1.0, y: 0.83, xref: 'paper', yref: 'paper', text: '3. Monotonically Decreasing', showarrow: false, bgcolor: colors[2], font: {color: 'white', size: 10}, borderpad: 4, xanchor: 'right' },
+        
+        // 4. Local Minimum
+        { x: 1.0, y: 0.77, xref: 'paper', yref: 'paper', text: '4. Local Minimum', showarrow: false, bgcolor: colors[3], font: {color: 'white', size: 10}, borderpad: 4, xanchor: 'right' },
+        
+        // 5. Not possible
+        { x: 1.0, y: 0.71, xref: 'paper', yref: 'paper', text: '5. Not possible (combined population bounded)', showarrow: false, bgcolor: colors[4], font: {color: 'black', size: 10}, borderpad: 4, xanchor: 'right' }
+    ]
+};
             
-            const layout = {
-                title: `Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)} (Extrema at t>0)`,
-                xaxis: { title: 'N<sub>I</sub>(0)', range: [0, T] },
-                yaxis: { title: 'N<sub>M</sub>(0)', range: [0, T], scaleanchor: 'x' },
-                width: 900,
-                height: 700,
-                annotations: [
-                    { x: 0.15, y: 0.95, xref: 'paper', yref: 'paper', text: '1. Monotonically Increasing', showarrow: false, bgcolor: colors[0], font: {color: 'white', size: 10}, borderpad: 4 },
-                    { x: 0.15, y: 0.88, xref: 'paper', yref: 'paper', text: '2. Local Maximum', showarrow: false, bgcolor: colors[1], font: {color: 'white', size: 10}, borderpad: 4 },
-                    { x: 0.15, y: 0.81, xref: 'paper', yref: 'paper', text: '3. Monotonically Decreasing', showarrow: false, bgcolor: colors[2], font: {color: 'white', size: 10}, borderpad: 4 },
-                    { x: 0.15, y: 0.74, xref: 'paper', yref: 'paper', text: '4. Local Minimum', showarrow: false, bgcolor: colors[3], font: {color: 'white', size: 10}, borderpad: 4 },
-                    { x: 0.15, y: 0.67, xref: 'paper', yref: 'paper', text: '5. Not possible (combined population bounded)', showarrow: false, bgcolor: colors[4], font: {color: 'black', size: 10}, borderpad: 4 }
-                ]
-            };
+            // const layout = {
+            //     title: `Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)} (Extrema at t>0)`,
+            //     xaxis: { title: 'N<sub>I</sub>(0)', range: [0, T] },
+            //     yaxis: { title: 'N<sub>M</sub>(0)', range: [0, T], scaleanchor: 'x' },
+            //     width: 900,
+            //     height: 700,
+            //     annotations: [
+            //         { x: 0.15, y: 0.95, xref: 'paper', yref: 'paper', text: '1. Monotonically Increasing', showarrow: false, bgcolor: colors[0], font: {color: 'white', size: 10}, borderpad: 4 },
+            //         { x: 0.15, y: 0.88, xref: 'paper', yref: 'paper', text: '2. Local Maximum', showarrow: false, bgcolor: colors[1], font: {color: 'white', size: 10}, borderpad: 4 },
+            //         { x: 0.15, y: 0.81, xref: 'paper', yref: 'paper', text: '3. Monotonically Decreasing', showarrow: false, bgcolor: colors[2], font: {color: 'white', size: 10}, borderpad: 4 },
+            //         { x: 0.15, y: 0.74, xref: 'paper', yref: 'paper', text: '4. Local Minimum', showarrow: false, bgcolor: colors[3], font: {color: 'white', size: 10}, borderpad: 4 },
+            //         { x: 0.15, y: 0.67, xref: 'paper', yref: 'paper', text: '5. Not possible (combined population bounded)', showarrow: false, bgcolor: colors[4], font: {color: 'black', size: 10}, borderpad: 4 }
+            //     ]
+            // };
             
             Plotly.newPlot('plot1', [trace1, trace2], layout);
         }
