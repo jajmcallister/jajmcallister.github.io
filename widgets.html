@@ -87,7 +87,70 @@ const T=1.0,N_POINTS=150,EPSILON=1e-9,TIME_MAX=50.0,TIME_POINTS=500;
 function solveLinearSystem(A,b){const n=A.length;const aug=A.map((r,i)=>[...r,b[i]]);for(let i=0;i<n;i++){let max=i;for(let k=i+1;k<n;k++){if(Math.abs(aug[k][i])>Math.abs(aug[max][i]))max=k;}[aug[i],aug[max]]=[aug[max],aug[i]];if(Math.abs(aug[i][i])<EPSILON)return null;for(let k=i+1;k<n;k++){const f=aug[k][i]/aug[i][i];for(let j=i;j<=n;j++)aug[k][j]-=f*aug[i][j];}}const x=new Array(n);for(let i=n-1;i>=0;i--){x[i]=aug[i][n];for(let j=i+1;j<n;j++)x[i]-=aug[i][j]*x[j];x[i]/=aug[i][i];}return x;}
 function eigenDecomposition2x2(A){const[a,b,c,d]=[A[0][0],A[0][1],A[1][0],A[1][1]];const tr=a+d,det=a*d-b*c,disc=tr*tr-4*det;if(disc<0)return null;const s=Math.sqrt(disc);let l1=(tr+s)/2,l2=(tr-s)/2;if(l2>l1)[l1,l2]=[l2,l1];const v1=[1,Math.abs(b)>EPSILON?(l1-a)/b:(l1-d)/c];const v2=[1,Math.abs(b)>EPSILON?(l2-a)/b:(l2-d)/c];return{lambda1:l1,lambda2:l2,v1,v2};}
 function analyzeExtrema(c,e,m,d,Ni0,Nm0){if(Ni0+Nm0>T+EPSILON)return 5;const A=-(e+m+c),B=d-c,C=m,D=-d,M=[[A,B],[C,D]];const eig=eigenDecomposition2x2(M);if(!eig)return 5;const{lambda1,lambda2,v1,v2}=eig;const v12=v1[1],v22=v2[1],W1=1+v12,W2=1+v22;const k=solveLinearSystem(M,[-c*T,0]);if(!k)return 5;const[k1,k2]=k;const cCoeffs=solveLinearSystem([[1,1],[v12,v22]],[Ni0-k1,Nm0-k2]);if(!cCoeffs)return 5;const[c1,c2]=cCoeffs;const S0=lambda1*c1*W1+lambda2*c2*W2;const denom=lambda1*c1*W1;let kappa=-1;if(Math.abs(denom)>EPSILON)kappa=(-lambda2*c2*W2)/denom;const hasExt=kappa>1.0+EPSILON;if(hasExt){if(S0>EPSILON)return 2;if(S0<-EPSILON)return 4;}if(S0>EPSILON)return 1;if(S0<-EPSILON)return 3;const ss=k1+k2;return Ni0+Nm0>ss+EPSILON?3:1;}
-function plotPhaseSpace(c,e,m,d){const z=[];for(let i=0;i<N_POINTS;i++){const row=[];const Nm0=i/(N_POINTS-1);for(let j=0;j<N_POINTS;j++){const Ni0=j/(N_POINTS-1);row.push(analyzeExtrema(c,e,m,d,Ni0,Nm0));}z.push(row);}const colors=['#1b9e77','#d95f02','#e7298a','#7570b3','#cccccc'];const colorscale=[[0,colors[0]],[0.2,colors[0]],[0.2,colors[1]],[0.4,colors[1]],[0.4,colors[2]],[0.6,colors[2]],[0.6,colors[3]],[0.8,colors[3]],[0.8,colors[4]],[1,colors[4]]];const trace1={z:z,x:Array.from({length:N_POINTS},(_,i)=>i/(N_POINTS-1)),y:Array.from({length:N_POINTS},(_,i)=>i/(N_POINTS-1)),type:'heatmap',colorscale:colorscale,showscale:false,zmin:1,zmax:5};const trace2={x:[0,T],y:[T,0],mode:'lines',line:{color:'black',width:2,dash:'dash'}};const layout={title:`Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)}`,xaxis:{title:'N<sub>I</sub>(0)',range:[0,T]},yaxis:{title:'N<sub>M</sub>(0)',range:[0,T],scaleanchor:'x'},width:900,height:700};Plotly.newPlot('plot1',[trace1,trace2],layout);}
+
+function plotPhaseSpace(c, e, m, d) {
+  const z = [];
+  for (let i = 0; i < N_POINTS; i++) {
+    const row = [];
+    const Nm0 = i / (N_POINTS - 1);
+    for (let j = 0; j < N_POINTS; j++) {
+      const Ni0 = j / (N_POINTS - 1);
+      row.push(analyzeExtrema(c, e, m, d, Ni0, Nm0));
+    }
+    z.push(row);
+  }
+
+  const colors = ['#1b9e77', '#d95f02', '#e7298a', '#7570b3', '#cccccc'];
+  const colorscale = [
+    [0, colors[0]], [0.2, colors[0]],
+    [0.2, colors[1]], [0.4, colors[1]],
+    [0.4, colors[2]], [0.6, colors[2]],
+    [0.6, colors[3]], [0.8, colors[3]],
+    [0.8, colors[4]], [1, colors[4]]
+  ];
+
+  // --- Heatmap trace ---
+  const trace1 = {
+    z: z,
+    x: Array.from({ length: N_POINTS }, (_, i) => i / (N_POINTS - 1)),
+    y: Array.from({ length: N_POINTS }, (_, i) => i / (N_POINTS - 1)),
+    type: 'heatmap',
+    colorscale: colorscale,
+    showscale: false,
+    zmin: 1,
+    zmax: 5
+  };
+
+  // --- Physical limit line ---
+  const trace2 = {
+    x: [0, T],
+    y: [T, 0],
+    mode: 'lines',
+    line: { color: 'black', width: 2, dash: 'dash' },
+    name: 'Physical Limit'
+  };
+
+  // --- Legend traces (invisible points, for labeling) ---
+  const legendTraces = [
+    { name: 'Monotonically Increasing', marker: { color: colors[0] }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
+    { name: 'Local Maximum', marker: { color: colors[1] }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
+    { name: 'Monotonically Decreasing', marker: { color: colors[2] }, mode: 'markers', x: [null], y: [null], type: 'scatter' },
+    { name: 'Local Minimum', marker: { color: colors[3] }, mode: 'markers', x: [null], y: [null], type: 'scatter' }
+  ];
+
+  const layout = {
+    title: `Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)}`,
+    xaxis: { title: 'N<sub>I</sub>(0)', range: [0, T] },
+    yaxis: { title: 'N<sub>M</sub>(0)', range: [0, T], scaleanchor: 'x' },
+    width: 900,
+    height: 700,
+    legend: { x: 1.05, y: 1, bgcolor: 'rgba(255,255,255,0.8)' }
+  };
+
+  // --- Combine everything ---
+  Plotly.newPlot('plot1', [trace1, trace2, ...legendTraces], layout);
+}
+
 function solveODEAnalytical(c,e,m,d,Ni0,Nm0){const A=-(e+m+c),B=d-c,C=m,D=-d,M=[[A,B],[C,D]];const eig=eigenDecomposition2x2(M);if(!eig)return null;const{lambda1,lambda2,v1,v2}=eig;const v12=v1[1],v22=v2[1];const k=solveLinearSystem(M,[-c*T,0]);if(!k)return null;const[k1,k2]=k;const cCoeffs=solveLinearSystem([[1,1],[v12,v22]],[Ni0-k1,Nm0-k2]);if(!cCoeffs)return null;const[c1,c2]=cCoeffs;const time=Array.from({length:TIME_POINTS},(_,i)=>i*TIME_MAX/(TIME_POINTS-1));const Ni_t=time.map(t=>Math.max(0,Math.min(T,c1*Math.exp(lambda1*t)+c2*Math.exp(lambda2*t)+k1)));const Nm_t=time.map(t=>Math.max(0,Math.min(T,c1*v12*Math.exp(lambda1*t)+c2*v22*Math.exp(lambda2*t)+k2)));const Np_t=Ni_t.map((ni,i)=>T-(ni+Nm_t[i]));return{time,Ni_t,Nm_t,Np_t,k1,k2};}
 function plotTimeSeries(c,e,m,d,Ni0,Nm0){const res=solveODEAnalytical(c,e,m,d,Ni0,Nm0);if(!res){Plotly.newPlot('plot2',[],{title:'Error'});return;}const{time,Ni_t,Nm_t,Np_t,k1,k2}=res;const Nsum=Ni_t.map((x,i)=>x+Nm_t[i]);const traces=[{x:time,y:Ni_t,name:'N<sub>I</sub>(t)',line:{color:'#1b9e77',width:2}},{x:time,y:Nm_t,name:'N<sub>M</sub>(t)',line:{color:'#7570b3',width:2}},{x:time,y:Nsum,name:'N<sub>I</sub>+N<sub>M</sub>',line:{color:'#d95f02',dash:'dash',width:3}},{x:time,y:Np_t,name:'N<sub>P</sub>(t)',line:{color:'#e7298a',dash:'dot',width:2}}];const layout={title:`Population Dynamics (using c,e,m,d from phase space)`,xaxis:{title:'Time (t)'},yaxis:{title:'Population Fraction'},width:1100,height:600};Plotly.newPlot('plot2',traces,layout);}
 function setupSlider(id,callback){const s=document.getElementById(id);const v=document.getElementById(id+'-val');s.addEventListener('input',e=>{v.textContent=parseFloat(e.target.value).toFixed(2);callback();});}
