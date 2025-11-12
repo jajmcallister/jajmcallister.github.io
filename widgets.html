@@ -34,25 +34,25 @@ input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;b
 <div class="controls">
   <div class="slider-group"><label>Creation Rate (c):</label>
     <div class="slider-container">
-      <input type="range" id="c1" min="0.1" max="1.5" step="0.05" value="0.4">
+      <input type="range" id="c1" min="0.1" max="1.0" step="0.05" value="0.4">
       <span class="value-display" id="c1-val">0.40</span>
     </div>
   </div>
   <div class="slider-group"><label>Elimination Rate (e):</label>
     <div class="slider-container">
-      <input type="range" id="e1" min="0.1" max="1.5" step="0.05" value="0.4">
+      <input type="range" id="e1" min="0.1" max="1.0" step="0.05" value="0.4">
       <span class="value-display" id="e1-val">0.40</span>
     </div>
   </div>
   <div class="slider-group"><label>Maturation Rate (m):</label>
     <div class="slider-container">
-      <input type="range" id="m1" min="0.1" max="1.5" step="0.05" value="0.2">
+      <input type="range" id="m1" min="0.1" max="1.0" step="0.05" value="0.2">
       <span class="value-display" id="m1-val">0.20</span>
     </div>
   </div>
   <div class="slider-group"><label>Decay Rate (d):</label>
     <div class="slider-container">
-      <input type="range" id="d1" min="0.1" max="1.5" step="0.05" value="0.5">
+      <input type="range" id="d1" min="0.1" max="1.0" step="0.05" value="0.5">
       <span class="value-display" id="d1-val">0.50</span>
     </div>
   </div>
@@ -139,13 +139,14 @@ function plotPhaseSpace(c, e, m, d) {
   ];
 
   const layout = {
-    title: `Phase Space for c=${c.toFixed(2)}, e=${e.toFixed(2)}, m=${m.toFixed(2)}, d=${d.toFixed(2)}`,
-    xaxis: { title: 'N<sub>I</sub>(0)', range: [0, T] },
-    yaxis: { title: 'N<sub>M</sub>(0)', range: [0, T], scaleanchor: 'x' },
-    width: 900,
-    height: 700,
-    legend: { x: 1.05, y: 1, bgcolor: 'rgba(255,255,255,0.8)' }
-  };
+  title: 'Phase space of local extremum behaviour across initial population values for given c, m, e, d',
+  xaxis: { title: 'Initial value of immature population (N<sub>I</sub>(0))', range: [0, T] },
+  yaxis: { title: 'Initial value of mature population (N<sub>M</sub>(0))', range: [0, T], scaleanchor: 'x' },
+  width: 900,
+  height: 700,
+  legend: { x: 1.05, y: 1, bgcolor: 'rgba(255,255,255,0.8)' }
+};
+
 
   // --- Combine everything ---
   Plotly.newPlot('plot1', [trace1, trace2, ...legendTraces], layout);
