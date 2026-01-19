@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Letter Frequency Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { display: flex; justify-content: space-between; gap: 20px; }
+        .column { width: 48%; }
+        textarea { width: 100%; height: 200px; }
+        .stats { margin-top: 20px; font-size: 16px; }
+        canvas { width: 100% !important; height: auto !important; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<h2>Letter Frequency Analyser</h2>
+
+<div class="container">
+
+    <div class="column">
+        <h3>Text A</h3>
+        <textarea id="inputTextA" placeholder="Paste text A here..."></textarea><br>
+        <button onclick="analyze('A')">Analyse A</button>
+
+        <div class="stats" id="statsOutputA"></div>
+        <canvas id="barChartA"></canvas>
+    </div>
+
+    <div class="column">
+        <h3>Text B</h3>
+        <textarea id="inputTextB" placeholder="Paste text B here..."></textarea><br>
+        <button onclick="analyze('B')">Analyse B</button>
+
+        <div class="stats" id="statsOutputB"></div>
+        <canvas id="barChartB"></canvas>
+    </div>
+
+</div>
+
+<script>
+function analyze(id) {
+    let text = document.getElementById("inputText" + id).value;
+    let totalChars = text.length;
+
+    let clean = text.toUpperCase().replace(/[^A-Z]/g, '');
+    let totalLetters = clean.length;
+
+    let counts = {};
+    for (let c of clean) counts[c] = (counts[c] || 0) + 1;
+
+    let letters = Object.keys(counts).sort();
+    let freqs = letters.map(c => counts[c]);
+
+    let most = letters.length ? letters.reduce((a, b) => counts[a] > counts[b] ? a : b) : "";
+
+    document.getElementById("statsOutput" + id).innerHTML = `
+        <p><b>Total characters:</b> ${totalChars}</p>
+        <p><b>Total letters (A–Z):</b> ${totalLetters}</p>
+        <p><b>Most frequent letter:</b> ${most} (${counts[most] || 0} times)</p>
+    `;
+
+    if (window["chart" + id]) window["chart" + id].destroy();
+
+    let ctx = document.getElementById("barChart" + id).getContext("2d");
+
+    window["chart" + id] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: letters,
+            datasets: [{
+                label: 'Letter Count',
+                data: freqs
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 2.0,  // Width:Height ratio (wider = less squashed)
+            scales: {
+                x: { ticks: { autoSkip: false } }
+            }
+        }
+    });
+}
+</script>
+
+</body>
+</html>
