@@ -2,25 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Handwritten Text Frequency Analysis</title>
+<title>Handwritten Text Letter Frequency Analysis</title>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-#results {
-    margin-top: 20px;
-}
-#barChart {
-    width: 600px;
-    height: 300px;
-    border: 1px solid #ccc;
-}
-#loader {
-    display: none;
-    font-weight: bold;
-}
+body { font-family: Arial, sans-serif; margin: 20px; }
+#results { margin-top: 20px; }
+#barChart { width: 600px; height: 300px; border: 1px solid #ccc; }
+#loader { display: none; font-weight: bold; }
 </style>
 </head>
 
@@ -38,7 +26,7 @@ body {
 <canvas id="barChart"></canvas>
 
 <script>
-// -------------- Helper: count frequencies --------------
+// ---------------- Helper functions ----------------
 function computeFrequencies(text) {
     const freq = {};
     for (const ch of text.toLowerCase()) {
@@ -49,11 +37,9 @@ function computeFrequencies(text) {
     return freq;
 }
 
-// -------------- Draw bar chart on canvas --------------
 function drawBarChart(freq) {
     const canvas = document.getElementById("barChart");
     const ctx = canvas.getContext("2d");
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const letters = Object.keys(freq).sort();
@@ -62,7 +48,6 @@ function drawBarChart(freq) {
 
     const w = canvas.width;
     const h = canvas.height;
-
     const barWidth = w / letters.length;
     const scale = h / maxCount;
 
@@ -70,29 +55,33 @@ function drawBarChart(freq) {
         const barHeight = freq[letter] * scale;
         const x = i * barWidth;
         const y = h - barHeight;
-
         ctx.fillStyle = "#4a90e2";
         ctx.fillRect(x, y, barWidth - 2, barHeight);
 
-        // label
         ctx.fillStyle = "black";
         ctx.font = "12px Arial";
         ctx.fillText(letter, x + barWidth/3, h - 5);
     });
 }
 
-// -------------- OCR + analysis pipeline --------------
+// ---------------- OCR + analysis ----------------
 document.getElementById("imageInput").addEventListener("change", async function() {
     const file = this.files[0];
     if (!file) return;
 
     document.getElementById("loader").style.display = "block";
-
+    document.getElementById("extractedText").innerHTML = "";
     const { createWorker } = Tesseract;
-    const worker = await createWorker();
 
-    const result = await worker.recognize(file);
-    const text = result.data.text;
+    const worker = createWorker({
+        logger: m => console.log(m) // optional: see progress
+    });
+
+    await worker.load();
+    await worker.loadLanguage('eng');
+    await worker.initialize('eng');
+
+    const { data: { text } } = await worker.recognize(file);
 
     await worker.terminate();
 
