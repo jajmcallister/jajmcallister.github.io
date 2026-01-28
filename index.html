@@ -84,25 +84,44 @@
       margin: 40px 0 20px;
     }
 
-    /* Tabs */
+/* Tabs Container */
 .tab-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 5px; /* Smaller gap looks better for bordered tabs */
+  margin-bottom: -1px; /* Pulls the container down to overlap the content border */
+  border-bottom: 1px solid #ccc; /* The baseline */
 }
 
 .tab-buttons button {
-  padding: 6px 14px;
-  border: none;
-  background: #ddd;
+  padding: 8px 16px;
+  border: 1px solid transparent; /* Keeps size stable when border appears */
+  background: white;
   cursor: pointer;
-  border-radius: 4px;
   font-size: 14px;
+  color: #555;
+  border-radius: 4px 4px 0 0; /* Rounds the top corners only */
+  transition: all 0.2s ease;
 }
 
+/* Hover effect */
+.tab-buttons button:hover {
+  background-color: #f9f9f9;
+  color: #000;
+}
+
+/* The "Open" Tab Style */
 .tab-buttons button.active {
-  background: #0066cc;
-  color: white;
+  background: white;
+  color: black;
+  font-weight: bold;
+  /* Top and side borders */
+  border-top: 1px solid #ccc; 
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  /* Remove bottom border to "merge" with content below */
+  border-bottom: 1px solid white; 
+  position: relative;
+  z-index: 1; /* Ensures the white bottom border covers the baseline */
 }
 
 .tab-content {
@@ -152,10 +171,11 @@
 
 <!-- Tab buttons -->
 <div class="tab-buttons">
-  <button class="tab-btn active" onclick="openTab('research')">Research</button>
-  <button class="tab-btn" onclick="openTab('talks')">Talks & Outreach</button>
-  <button class="tab-btn" onclick="openTab('teaching')">Teaching</button>
+  <button class="tab-btn active" onclick="openTab(event, 'research')">Research</button>
+  <button class="tab-btn" onclick="openTab(event, 'talks')">Talks & Outreach</button>
+  <button class="tab-btn" onclick="openTab(event, 'teaching')">Teaching</button>
 </div>
+
 
 <!-- Research -->
 <div id="research" class="tab-content active">
@@ -243,14 +263,13 @@
 
 
   <script>
-function openTab(tabId) {
-
+function openTab(evt, tabId) {
   // Hide all content
   document.querySelectorAll(".tab-content").forEach(tab => {
     tab.classList.remove("active");
   });
 
-  // Remove active from buttons
+  // Remove active class from buttons
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.classList.remove("active");
   });
@@ -258,8 +277,8 @@ function openTab(tabId) {
   // Show selected tab
   document.getElementById(tabId).classList.add("active");
 
-  // Activate button
-  event.target.classList.add("active");
+  // Add active class to the clicked button
+  evt.currentTarget.classList.add("active");
 }
 </script>
 
