@@ -171,14 +171,14 @@
 
 <!-- Tab buttons -->
 <div class="tab-buttons">
-  <button class="tab-btn active" onclick="openTab(event, 'research')">Research</button>
+  <button class="tab-btn" onclick="openTab(event, 'research')">Research</button>
   <button class="tab-btn" onclick="openTab(event, 'talks')">Talks & Outreach</button>
   <button class="tab-btn" onclick="openTab(event, 'teaching')">Teaching</button>
 </div>
 
 
 <!-- Research -->
-<div id="research" class="tab-content active">
+<div id="research" class="tab-content">
 
   <p>
       See <a href="research.html">here</a> for more detail, but I am interested in (mainly recurrent) neural networks from a complex systems, neuroscience, and machine learning perspective. 
@@ -267,21 +267,23 @@
 
   <script>
 function openTab(evt, tabId) {
-  // Hide all content
-  document.querySelectorAll(".tab-content").forEach(tab => {
-    tab.classList.remove("active");
+  const tab = document.getElementById(tabId);
+  const isActive = tab.classList.contains("active");
+
+  // Close all tabs
+  document.querySelectorAll(".tab-content").forEach(t => {
+    t.classList.remove("active");
   });
 
-  // Remove active class from buttons
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.classList.remove("active");
   });
 
-  // Show selected tab
-  document.getElementById(tabId).classList.add("active");
-
-  // Add active class to the clicked button
-  evt.currentTarget.classList.add("active");
+  // If it was NOT active, open it
+  if (!isActive) {
+    tab.classList.add("active");
+    evt.currentTarget.classList.add("active");
+  }
 }
 </script>
 
