@@ -45,7 +45,6 @@ function pos(e){
 ========================= */
 c.addEventListener("pointerdown", (e) => {
     const p = pos(e);
-    // Click again to reset and redraw a new pizza circle
     center = p;
     radius = 0;
     dragging = true;
@@ -84,13 +83,7 @@ function drawBase(){
 }
 
 /* =========================
-   MAIN VORONOI CVT (WITH AREA CORRECTION)
-========================= */
-/* =========================
-   MAIN VORONOI CVT (WITH CHAOTIC EQUAL-AREA CORRECTION)
-========================= */
-/* =========================
-   MAIN VORONOI CVT (WITH SIMULATED ANNEALING AREA EQUALIZATION)
+   MAIN VORONOI CVT (WITH GRADUAL COOLING EQUALIZATION)
 ========================= */
 function generate(){
     if(!center || !radius || radius < 5){
@@ -99,12 +92,12 @@ function generate(){
     }
 
     const N = +document.getElementById("n").value;
-    const step = 4; // Lower step = sharper cuts & lines, but slightly higher processing load
+    const step = 4; // Lower step (e.g. 2 or 3) makes area calculation even more accurate
 
     // 1. INIT SEEDS
     let sites = Array.from({length:N}, () => randomPointInCircle());
     
-    // Track dynamic weights for area correction (capacity-constrained weights)
+    // Track dynamic weights for area correction
     let weights = Array.from({length:N}, () => 1.0);
 
     const colors = Array.from(
@@ -112,8 +105,8 @@ function generate(){
         (_,i) => `hsl(${i*360/N}, 85%, 55%)`
     );
 
-    // 2. ANNEALED CAPACITY-CONSTRAINED LLOYD RELAXATION LOOP
-    const loops = 30; // Increased loop count slightly to ensure absolute convergence on equal areas
+    // 2. CAPACITY-CONSTRAINED LLOYD RELAXATION LOOP WITH ANNEALING
+    const loops = 30; // Increased loop count slightly to let sizes perfect themselves
     
     for(let iter=0; iter<loops; iter++){
 
@@ -133,7 +126,7 @@ function generate(){
                     const dx = x - sites[i].x;
                     const dy = y - sites[i].y;
                     
-                    // Modulating distance using our area constraint scale factors (weights)
+                    // Modulating distance using our capacity multipliers (weights)
                     const d = (dx*dx + dy*dy) / weights[i];
 
                     if(d < bestD){
@@ -150,9 +143,7 @@ function generate(){
 
         const targetCountPerCell = totalCount / N;
 
-        // --- SIMULATED ANNEALING ENGINE ---
-        // 'temperature' starts at 1.0 on loop 0 and smoothly drops to 0.0 by the end.
-        // This gives us maximum structural chaos early on, and perfect area convergence late.
+        // "Temperature" cools down from 1.0 to 0.0 as iterations progress
         const temperature = Math.max(0, 1.0 - (iter / (loops - 5))); 
 
         /* Adjust sites with custom random offsets + adapt area weights */
@@ -162,28 +153,29 @@ function generate(){
                 const trueCenterX = accum[i].x / accum[i].count;
                 const trueCenterY = accum[i].y / accum[i].count;
                 
-                // Add a random push offset that cools down over time
-                const chaosScale = radius * 0.45 * temperature; // Massive early chaos (45% of radius!)
+                // --- INJECT THE ANNEALED CHAOS ---
+                // Chaos diminishes down to zero near the end of the loop execution
+                const chaosScale = radius * 0.25 * temperature; 
                 const randomAngle = Math.random() * Math.PI * 2;
                 
                 const chaosX = Math.cos(randomAngle) * chaosScale;
                 const chaosY = Math.sin(randomAngle) * chaosScale;
 
-                // Move the site toward its centroid, plus our cooled chaotic offset
-                const rate = 0.25;
+                // Move the site toward its true center, adding temporary fading chaos
+                const rate = 0.4;
                 sites[i].x = sites[i].x + (trueCenterX - sites[i].x) * rate + chaosX;
                 sites[i].y = sites[i].y + (trueCenterY - sites[i].y) * rate + chaosY;
                 
-                // Ensure the chaos push didn't accidentally kick the seed out of the pizza entirely
+                // Ensure the chaos push didn't kick the seed out of the pizza entirely
                 if (!inside(sites[i].x, sites[i].y)) {
                     sites[i] = randomPointInCircle();
                 }
                 
-                // --- AREA EQUALIZER ---
-                // As the temperature cools down, the area equalizer gets more aggressive
+                // --- AGGRESSIVE AREA EQUALIZER ---
+                // Compares current area against targeted value and modifies weights scaling
                 const sizeRatio = accum[i].count / targetCountPerCell;
-                const correctionForce = 0.35 + (1.0 - temperature) * 0.4; 
-                weights[i] *= (1.0 + (1.0 - sizeRatio) * correctionForce); 
+                // If it is too small, aggressively scale up its spatial dominance factor
+                weights[i] *= (1.0 + (1.0 - sizeRatio) * 0.5); 
             } else {
                 sites[i] = randomPointInCircle();
                 weights[i] = 1.0;
@@ -216,6 +208,7 @@ function generate(){
 
     draw(grid, colors, step);
 }
+
 /* =========================
    HELPERS
 ========================= */
@@ -227,7 +220,7 @@ function inside(x,y){
 
 function randomPointInCircle(){
     const t = Math.random() * 2*Math.PI;
-    const r = Math.sqrt(Math.random()) * radius * 0.8; // keep slightly inside for initial stability
+    const r = Math.sqrt(Math.random()) * radius * 0.8; 
     return {
         x: center.x + r*Math.cos(t),
         y: center.y + r*Math.sin(t)
@@ -238,24 +231,21 @@ function randomPointInCircle(){
    RENDER
 ========================= */
 function draw(grid, colors, step){
-    // 1. Wipe previous frames
     ctx.clearRect(0, 0, c.width, c.height);
 
-    // 2. Render colored grid blocks
+    // Render colored grid blocks
     ctx.globalAlpha = 0.45;
     for(const cell of grid){
         ctx.fillStyle = colors[cell.owner];
         ctx.fillRect(cell.x, cell.y, step, step);
     }
 
-    // 3. Render clean crisp white boundary cuts between cell territories
+    // Render boundary lines
     ctx.globalAlpha = 0.8;
     ctx.strokeStyle = "white";
     ctx.lineWidth = 2;
 
-    // Detect pixel neighborhood changes to locate straight cutting edges
     for (const cell of grid) {
-        // Look right and down to check if owner changes (edge detection)
         const checkPoints = [
             {x: cell.x + step, y: cell.y},
             {x: cell.x, y: cell.y + step}
@@ -263,7 +253,6 @@ function draw(grid, colors, step){
 
         for(const pt of checkPoints) {
             if (inside(pt.x, pt.y)) {
-                // Approximate hit test against local ownership array to see if border is reached
                 const neighbor = grid.find(g => g.x === pt.x && g.y === pt.y);
                 if (neighbor && neighbor.owner !== cell.owner) {
                     ctx.strokeRect(cell.x, cell.y, step, step);
@@ -272,9 +261,8 @@ function draw(grid, colors, step){
         }
     }
 
-    // 4. Draw guiding overlay parameters on top without clearing progress!
+    // Base overlay
     ctx.globalAlpha = 1.0;
-    
     ctx.strokeStyle = "lime";
     ctx.lineWidth = 3;
     ctx.beginPath();
