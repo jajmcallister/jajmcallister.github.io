@@ -252,40 +252,71 @@ function applyAnchorsToRadii(radii, anchorData) {
 
 /* =========================
    CONTOUR SCAN
+   Uses local gradient magnitude along each ray rather than
+   comparing to a global centre brightness. This works on any
+   object regardless of whether it's lighter or darker than surroundings.
 ========================= */
 function scanContour(gray, cx, cy) {
     const MAX_R = Math.min(OW, OH) * 0.52;
-    const MIN_R = 20;
-    const STEP  = 2.0;
+    const MIN_R = 12;
+    const STEP  = 1.5;
 
-    let refs = [];
-    for (let r=0; r<MIN_R*0.8; r+=STEP) {
-        for (let a=0; a<8; a++) {
-            const ang = a/8*Math.PI*2;
-            const xi = Math.round(cx+Math.cos(ang)*r);
-            const yi = Math.round(cy+Math.sin(ang)*r);
-            if (xi>=0&&xi<OW&&yi>=0&&yi<OH) refs.push(gray[yi*OW+xi]);
+    // Pre-compute Sobel gradient magnitude for the whole frame (fast, reused by all rays)
+    const grad = new Float32Array(OW * OH);
+    for (let y=1; y<OH-1; y++) {
+        for (let x=1; x<OW-1; x++) {
+            const gx =
+                -gray[(y-1)*OW+(x-1)] + gray[(y-1)*OW+(x+1)]
+                -2*gray[y*OW+(x-1)]   + 2*gray[y*OW+(x+1)]
+                -gray[(y+1)*OW+(x-1)] + gray[(y+1)*OW+(x+1)];
+            const gy =
+                -gray[(y-1)*OW+(x-1)] - 2*gray[(y-1)*OW+x] - gray[(y-1)*OW+(x+1)]
+                +gray[(y+1)*OW+(x-1)] + 2*gray[(y+1)*OW+x] + gray[(y+1)*OW+(x+1)];
+            grad[y*OW+x] = Math.sqrt(gx*gx + gy*gy);
         }
     }
-    if (!refs.length) return null;
-    const refMean = refs.reduce((a,b)=>a+b,0)/refs.length;
-    const THRESHOLD = 35;
+
+    // Adaptive threshold: use the 85th-percentile gradient near the centre region
+    // so the threshold scales automatically with image contrast.
+    const sampleGrads = [];
+    for (let r=MIN_R; r<MAX_R; r+=4) {
+        for (let a=0; a<16; a++) {
+            const ang = a/16*Math.PI*2;
+            const xi = Math.round(cx+Math.cos(ang)*r);
+            const yi = Math.round(cy+Math.sin(ang)*r);
+            if (xi>0&&xi<OW-1&&yi>0&&yi<OH-1) sampleGrads.push(grad[yi*OW+xi]);
+        }
+    }
+    sampleGrads.sort((a,b)=>a-b);
+    const pct85 = sampleGrads[Math.floor(sampleGrads.length*0.85)] || 30;
+    // Edge threshold: a fraction of the strong-edge level, min 15
+    const EDGE_THRESH = Math.max(15, pct85 * 0.45);
 
     const rawRadii = new Float32Array(NUM_RAYS);
     for (let a=0; a<NUM_RAYS; a++) {
         const ang  = (a/NUM_RAYS)*Math.PI*2;
         const cosA = Math.cos(ang), sinA = Math.sin(ang);
-        let edgeR  = MAX_R;
+
+        // Walk outward; find the strongest gradient peak along this ray
+        let bestGrad = 0, bestR = MAX_R;
         let streak = 0;
+
         for (let r=MIN_R; r<=MAX_R; r+=STEP) {
             const xi = Math.round(cx+cosA*r);
             const yi = Math.round(cy+sinA*r);
-            if (xi<0||xi>=OW||yi<0||yi>=OH) { edgeR=r; break; }
-            if (Math.abs(gray[yi*OW+xi]-refMean)>THRESHOLD) {
-                if (++streak>=4) { edgeR=r-STEP*4; break; }
-            } else { streak=0; }
+            if (xi<=0||xi>=OW-1||yi<=0||yi>=OH-1) { bestR=r; break; }
+            const g = grad[yi*OW+xi];
+            if (g > EDGE_THRESH) {
+                streak++;
+                if (g > bestGrad) { bestGrad = g; }
+                // Commit after 2 consecutive strong pixels — first sustained edge wins
+                if (streak >= 2) { bestR = r - STEP; break; }
+            } else {
+                // Reset streak but keep looking — don't stop at first weak gap
+                streak = 0;
+            }
         }
-        rawRadii[a] = Math.max(MIN_R, edgeR);
+        rawRadii[a] = Math.max(MIN_R, bestR);
     }
 
     // Spatial median filter
@@ -316,9 +347,7 @@ function scanContour(gray, cx, cy) {
         }
     }
 
-    // Circularity regulariser — pull each free ray toward the mean radius.
-    // Mean is computed only from unanchored rays so anchors don't distort it.
-    // Anchored rays are fully exempt — they keep their exact snapped value.
+    // Circularity regulariser
     const CIRCLE_PULL = 0.72;
     let meanSum = 0, meanCount = 0;
     for (let i=0; i<NUM_RAYS; i++) {
@@ -328,12 +357,12 @@ function scanContour(gray, cx, cy) {
     const meanR = meanCount > 0 ? meanSum / meanCount : historicalRadii.reduce((s,r)=>s+r,0)/NUM_RAYS;
     for (let i=0; i<NUM_RAYS; i++) {
         const exemption = anchorMask ? anchorMask[i] : 0;
-        if (exemption >= 0.5) continue; // anchored ray — do not touch
+        if (exemption >= 0.5) continue;
         const pull = CIRCLE_PULL * (1 - exemption);
         historicalRadii[i] = historicalRadii[i] * (1 - pull) + meanR * pull;
     }
 
-    // Re-apply anchors a final time so the regulariser can never pull them off their pins
+    // Re-apply anchors so regulariser can never pull them off their pins
     applyAnchorsToRadii(historicalRadii, anchorData);
 
     const pts = [];
@@ -620,7 +649,7 @@ function generate() {
     sliceGrid=newGrid;
     sliceColors=colors;
     phase='sliced';
-    setStatus(`Sliced into ${N} parts!`);
+    setStatus(`Sliced into ${N} parts! Move it and it follows. Tap to re-anchor.`);
 }
 
 setStatus("Tap the centre of your object to begin");
