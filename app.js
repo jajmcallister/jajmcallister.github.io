@@ -317,15 +317,24 @@ function scanContour(gray, cx, cy) {
     }
 
     // Circularity regulariser — pull each free ray toward the mean radius.
-    // CIRCLE_PULL=1.0 → perfect circle; 0.0 → no regularisation.
-    // Anchored rays are exempt so user pins stay respected.
+    // Mean is computed only from unanchored rays so anchors don't distort it.
+    // Anchored rays are fully exempt — they keep their exact snapped value.
     const CIRCLE_PULL = 0.72;
-    const meanR = historicalRadii.reduce((s,r)=>s+r,0) / NUM_RAYS;
+    let meanSum = 0, meanCount = 0;
+    for (let i=0; i<NUM_RAYS; i++) {
+        const w = anchorMask ? anchorMask[i] : 0;
+        if (w < 0.5) { meanSum += historicalRadii[i]; meanCount++; }
+    }
+    const meanR = meanCount > 0 ? meanSum / meanCount : historicalRadii.reduce((s,r)=>s+r,0)/NUM_RAYS;
     for (let i=0; i<NUM_RAYS; i++) {
         const exemption = anchorMask ? anchorMask[i] : 0;
+        if (exemption >= 0.5) continue; // anchored ray — do not touch
         const pull = CIRCLE_PULL * (1 - exemption);
         historicalRadii[i] = historicalRadii[i] * (1 - pull) + meanR * pull;
     }
+
+    // Re-apply anchors a final time so the regulariser can never pull them off their pins
+    applyAnchorsToRadii(historicalRadii, anchorData);
 
     const pts = [];
     for (let a=0; a<NUM_RAYS; a++) {
@@ -611,7 +620,7 @@ function generate() {
     sliceGrid=newGrid;
     sliceColors=colors;
     phase='sliced';
-    setStatus(`Sliced into ${N} parts! Move it and it follows. Tap to re-anchor.`);
+    setStatus(`Sliced into ${N} parts!`);
 }
 
 setStatus("Tap the centre of your object to begin");
