@@ -309,12 +309,22 @@ function scanContour(gray, cx, cy) {
         const blend = anchorData.length > 0 ? 0.08 : 0.05;
         for (let i=0; i<NUM_RAYS; i++) {
             if (anchorMask[i] > 0.5) {
-                // Anchored ray: snap directly to the anchor value, no damping
                 historicalRadii[i] = spatialRadii[i];
             } else {
                 historicalRadii[i] = historicalRadii[i]*(1-blend) + spatialRadii[i]*blend;
             }
         }
+    }
+
+    // Circularity regulariser — pull each free ray toward the mean radius.
+    // CIRCLE_PULL=1.0 → perfect circle; 0.0 → no regularisation.
+    // Anchored rays are exempt so user pins stay respected.
+    const CIRCLE_PULL = 0.72;
+    const meanR = historicalRadii.reduce((s,r)=>s+r,0) / NUM_RAYS;
+    for (let i=0; i<NUM_RAYS; i++) {
+        const exemption = anchorMask ? anchorMask[i] : 0;
+        const pull = CIRCLE_PULL * (1 - exemption);
+        historicalRadii[i] = historicalRadii[i] * (1 - pull) + meanR * pull;
     }
 
     const pts = [];
