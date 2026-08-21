@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="description" content="Postdoctoral researcher at Trinity College Dublin and Oxford University" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="keywords" content="Mathematics Applied Maths Neuroscience Computational Theoretical Trinity TCD Ulster Oxford University College Dublin Ireland Recurrent Neural Networks"/>
+  <title>James McAllister</title>
+  <link rel="icon" type="image/x-icon" href="images/faviconnetwork.png">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WC8LNZNK');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T94PEDSLPJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T94PEDSLPJ');
+  </script>
+
+  <style>
+    /* body {
+      font-family: "Helvetica Neue", Helvetica, sans-serif;
+      background-color: white;
+      margin: 40px auto;
+      max-width: 900px;
+      color: #111;
+      line-height: 1.6;
+    } */
+
+    body {
+  font-family: "Inter", "IBM Plex Sans", sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.2px;
+  background-color: white;
+  margin: 40px auto;
+  max-width: 900px;
+  color: #111;
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+}
+    
+    h1, h2, h3 {
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  font-size: 18px;
+  color: #444;
+}
+
+h3 {
+  font-size: 15px;
+  text-transform: uppercase;
+  color: #666;
+}
+
+h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+}
+
+    .header-box {
+  border: 1px solid #ddd;
+  padding: 10px 25px;
+  margin-bottom: 30px;
+  border-radius: 6px;
+  background: #fafafa;
+    }
+    
+    img.two {
+      width: 40%;
+      float: right;
+      margin-left: 20px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+
+    .text-container {
+      width: 100%;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* .button-group a {
+      padding: 6px 12px;
+      background-color: #ddd;
+      color: black;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 14px;
+    } */
+
+    .button-group a {
+  padding: 6px 10px;
+  background-color: #F5F5F5;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #444;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.button-group a:hover {
+  border-color: black;
+  color: black;
+}
+
+    ul {
+      padding-left: 1.2em;
+    }
+
+    hr {
+      margin: 40px 0 20px;
+    }
+
+/* Tabs Container */
+.tab-buttons {
+  display: flex;
+  gap: 5px; /* Smaller gap looks better for bordered tabs */
+  margin-bottom: -1px; /* Pulls the container down to overlap the content border */
+  border-bottom: 1px solid #ccc; /* The baseline */
+}
+
+.tab-buttons button {
+  padding: 8px 16px;
+  border: 1px solid transparent; /* Keeps size stable when border appears */
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  border-radius: 4px 4px 0 0; /* Rounds the top corners only */
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.tab-buttons button:hover {
+  background-color: #f9f9f9;
+  color: #000;
+}
+
+/* The "Open" Tab Style */
+.tab-buttons button.active {
+  background: white;
+  color: black;
+  font-weight: bold;
+  /* Top and side borders */
+  border-top: 1px solid #ccc; 
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  /* Remove bottom border to "merge" with content below */
+  border-bottom: 1px solid white; 
+  position: relative;
+  z-index: 1; /* Ensures the white bottom border covers the baseline */
+}
+
+.tab-content {
+  display: none;
+  background-color: #fafafa;   /* light grey */
+  padding: 20px;
+  border: 1px solid #ccc;
+ /* border-top: none;            /* connects visually to tabs */
+  border-radius: 0 6px 6px 6px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+#mesh {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.5; /* key: keep subtle */
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-text {
+  flex: 1;   /* text takes remaining space */
+}
+
+.header-logos {
+  display: flex;
+  flex-direction: column;  /* key change */
+  gap: 8px;
+  align-items: flex-end;   /* keeps them right-aligned */
+}
+
+.header-logos img {
+  height: 75px;
+  width: auto;
+}
+
+  </style>
+</head>
+
+<body>
+    <canvas id="mesh"></canvas>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WC8LNZNK"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<div class="header-box header-flex">
+  
+  <div class="header-text">
+    <h1><b>James McAllister</b>, Postdoctoral Researcher</h1>
+    <h2><b><i>Trinity College Dublin & Oxford University</i></b></h2>
+    <!-- <h4><b><i>Institute of Mathematics & its Applications and Society for Industrial & Applied Mathematics</i></b></h4> -->
+     <h4>Theoretical Neuroscience, Applied Mathematics, Machine Learning</h4>
+  </div>
+
+  <div class="header-logos">
+    <img src="images/tcdlogo.png" alt="Trinity logo">
+    <img src="images/oxfordlogo.png" alt="Oxford logo">
+  </div>
+
+</div>
+
+  
+  <h3><u>About me</u></h3>
+    <img class="two" src="images/20181106124252_IMG_1100__01.jpg" alt="Photo of James McAllister">
+    I am a postdoctoral researcher in theoretical and computational neuroscience in Trinity College Dublin and Oxford University with Dr <a href="https://www.sfwneuro.com/"  style="color: #555; text-decoration: none;">Seán Froudist-Walsh</a>. 
+  <br><br>
+  I completed my PhD under the supervision of Dr <a href="https://odonnellgroup.github.io/"  style="color: #555; text-decoration: none;">Cian O'Donnell</a>, in the <i>Intelligent Systems Research Centre,</i> Ulster University, 
+  and was visiting PhD Researcher at the University of Bristol, under Dr <a href="https://conorhoughton.github.io/" style="color: #555; text-decoration: none;">Conor Houghton</a> (School of Engineering Mathematics and Technology).
+  <!-- I previously did my undergraduate (MA Dubl) in Mathematics at Trinity College Dublin, a PGCE (Mathematics) and a Masters of Research (MRes) at Queen's University Belfast.  -->
+   <br>
+   I studied Mathematics (MA Dubl) as a <a href="https://www.thenaughtonfoundation.com/scholars/2014" style="color: #555; text-decoration: none;">Naughton Scholar</a> at Trinity College Dublin, and obtained a PGCE (Mathematics) and MRes from Queen's University Belfast.
+
+<br>
+
+<img class="two" src="images/tcd_oxford.jpg" alt="Photos of Trinity College Dublin and Oxford University">
+<br>
+I am an active member of the <i>Institute of Mathematics & its Applications</i> (IMA) as Treasurer of the <a href="https://ima.org.uk/roles/irish-branch-committee/" style="color: #555; text-decoration: none;">Irish branch</a>, and a member of the <i>Society for Industrial & Applied Mathematics</i> (SIAM), and <i>Neuroscience Ireland</i> (NSI).
+
+
+
+  <div class="button-group">
+    <a href="mailto:mcallister-j23@ulster.ac.uk">Email</a>
+    <a href="https://www.linkedin.com/in/james-mcallister-80a5bb136/">LinkedIn Profile</a>
+    <a href="docs/CV.pdf">Curriculum Vitae</a>
+    <a href="coffee.html">Coffee Interests</a>
+    <a href="pizza_chaos_cutter.html">Pizza Chaos Cutter</a>
+  </div>
+
+  <br>
+
+<h3><u>Academic Material</u></h3>
+<!-- Tab buttons -->
+<div class="tab-buttons">
+  <button class="tab-btn" onclick="openTab(event, 'research')">Research</button>
+  <button class="tab-btn" onclick="openTab(event, 'talks')">Talks & Outreach</button>
+  <button class="tab-btn" onclick="openTab(event, 'teaching')">Teaching</button>
+</div>
+
+
+<!-- Research -->
+<div id="research" class="tab-content">
+
+  <p>
+     See <a href="research.html">here</a> for more detail, but I am mainly interested in biological and artificial recurrent neural networks – their structure, dynamics, and computation. 
+     <br>
+     I approach these questions using tools from complex systems theory, dynamical systems theory, topology, and machine learning, seeking to understand how the structure and dynamics of cortical networks give rise to complex cognitive function.
+     <br>
+     I am also interested in mathematical models and analysis of synaptic, neuronal, and network dynamics, particularly in the context of development, maturation, and computation.
+    </p>
+    <!-- <small><p style="margin-left: 30px;">Publications:</p></small> -->
+  <h4><u>Publications:</u></h4>
+    <ul>
+<li><strong>J McAllister</strong>, CJ Houghton, J Wade, C O'Donnell, <i>"Non-random brain wiring enables efficient and robust neural network function under high sparsity"</i>, 2026, bioRxiv, <a href="https://doi.org/10.64898/2026.03.30.715411">https://doi.org/10.64898/2026.03.30.715411</a></li>
+<li> L Discepolo, <strong>J McAllister</strong>, R Russell, S Apilado, G Margetts-Smith, D Franchini, SG Grant, C O'Donnell, MC Ashby, P Anastasiades <i>"Region- and layer-specific glutamatergic synapse development in the nascent cortical hierarchy"</i>, 2026, Journal of Neuroscience, <a href="https://doi.org/10.1523/JNEUROSCI.0293-26.2026">https://doi.org/10.1523/JNEUROSCI.0293-26.2026</a></li>
+<li><strong>J McAllister</strong>, J Wade, CJ Houghton, C O'Donnell, <i>"Topological and simplicial features of reservoir computing networks"</i>, 2024, UKCI, <a href="https://link.springer.com/chapter/10.1007/978-3-031-78857-4_5">https://link.springer.com/chapter/10.1007/978-3-031-78857-4_5</a></li>
+ <li>I Cantley, <strong>J McAllister</strong> <i>"Insights from a multilevel analysis of high-stakes examination results in mathematics"</i>, 2021, <a href="https://link.springer.com/article/10.1007/s11199-021-01234-5">https://link.springer.com/article/10.1007/s11199-021-01234-5</a></li>   </ul>
+   <!-- <small><p style="margin-left: 30px;"> Other work: </p></small> -->
+  <h4><u>Other work:</u></h4>
+    <ul>
+      <li><small><b>poster</b> – <i>"Exact Dynamics of Linear Recurrent Neural Networks in Cognitive Tasks"</i>, AREADNE June 2026, Milos, Greece</small></li>
+      <li><small><b>project</b> – Heterosynaptic plasticity as a mechanism for statistical generalisation of Hebbian learning, 2024-2025 </small>
+      <li><small><b>poster</b> – <i>"Sparsity and efficiency in connectome-based echo state networks"</i>, UKNC July 2025, Imperial College London</small></li>
+      <li><small><b>poster</b> – <i>"Structure-function relationships in connectome echo state networks"</i>, CoSyNe, Mar 2025</small></li>
+      <li><small><b>poster</b> – <i>"Random and biological network connectivity for reservoir computing"</i>, UKNC July 2024</small></li>
+      <li><small><b>poster</b> – <i>"Heterosynaptic plasticity rules induce small-world network topologies"</i>, ICMNS June 2024</small></li>
+      <li><small><b>project</b> – The capacity and accuracy of a triple well Hopfield model, ISRC-CN3 School Project, Oct 2023</small></li>
+      <li><small><b>project</b> – Short term plasticity in a discrete attractor model of decision making, Neuromatch Academy Project, July 2023</small></li>
+    </ul>
+
+</div>
+
+<!-- Talks -->
+<div id="talks" class="tab-content">
+<h4><u>Talks:</u></h4>
+    <ul>
+      <li><small><b>University of Oxford</b>, Centre For Integrative Neuroimaging, July 2026</small></li>
+      <li><small><b><a href="https://www.ulster.ac.uk/festival-of-phd-research">Festival of Research</a></b>, Ulster University, June 2026</small></li>
+      <li><small><b>Lightning Talk, All-Ireland Computational Neuroscience Symposium</b>, Queen's University Belfast, December 2025</small></li>
+      <li><small><b><a href="https://ni-hpc.ac.uk/NI-HPCUserConference2025/">NI High Performance Computing Conference</a></b>, November 2025, Queen's University Belfast</small></li>
+      <li><small><b><a href="https://florian.rossmannek.com/EMPOWER_GOAL.html">Dynamical Systems and Neuroscience</a></b>, October 2025, Mathematical Sciences, Nanyang Technological University</small></li>
+      <li><small><b><a href="https://heilbronn.ac.uk/2025/05/14/recent-trends-in-rough-analysis-and-dynamical-systems-theory-and-practice/">Recent Trends in Rough Analysis and Dynamical Systems</a></b>, July 2025, Heilbronn Institute for Mathematical Research, the Applied Probability Trust, the Isaac Newton Institute Network on "Mathematical Data Science for Materials Science”, and Univ. of Liverpool</small></li>
+      <li><small><b>Ignite Talk</b>, Intelligent Systems Research Centre, June 2025</small></li>
+      <li><small><b>University of Cambridge, <a href="https://talks.cam.ac.uk/talk/index/232441">Computational and Biological Learning Lab (CBL)</a></b>, May 2025</small></li>
+      <li><small><b>COIN Club Presentation</b>, February 2025</small></li>
+      <li><small><b><a href="https://computing.ulster.ac.uk/ZhengLab/UKCI2024/programme.html">UK Computational Intelligence</a></b>, September 2024, Belfast</small></li>
+      <li><small><b><a href="https://isrc-seminars.github.io/2023_24_seminars.html">Seminar</a></b>, May 2024, Intelligent Systems Research Centre</small></li>
+      <li><small><b>COIN Club Presentation</b>, May 2024</small></li>
+    </ul>
+
+  <h4><u>Outreach:</u></h4>
+  <ul>
+    <li><small><b>Institute of Mathematics and Applications</b>, International Day for Women in Mathematics, May 2026, <a href="docs/women_maths_26.png">link</a></small></li>
+    <li><small><b>NI Maths Fest</b>, Foyle Arena, January 2026</small></li>
+    <li><small><b>Intelligent Systems Research Centre Open Nights</b>, 2023-2025</small></li>
+    <li><small><b>British Society for Research into Learning Mathematics Conference</b>, Queen's University Belfast, Volunteer, November 2019</small></li>
+    <li><small><b>Assistant</b>, Trinity College Dublin, School of Mathematics, Open Days, 2014-2018</small></li>
+  </ul>
+
+</div>
+
+<!-- Teaching -->
+<div id="teaching" class="tab-content">
+
+  <ul>
+    <li><b>COM121</b> - Mathematics for Computer Science</li>
+    <li><b>EEE107</b> - Mathematics for Engineering 1</li>
+    <li><b>COM736</b> - Data Validation and Visualisation</li>
+  </ul>
+
+</div>
+
+
+  <h3><u>Group</u></h3>
+
+  
+
+  <div class="text-container"> <p> I am in the <a href="https://www.sfwneuro.com/">Cognition, Anatomy & Neural Networks (CANN)</a> research group, shared between Trinity and Oxford. </p> </div>
+
+  <!-- <img src="tcd_oxford.jpg" width=200 position="center"> -->
+
+
+
+<!-- 
+     <p><i>Past and present:</i></p>
+  <div style="display: flex; gap: 12px; align-items: center;">
+    <a href="https://www.tcd.ie/"><img src="images/tcdlogo.png" style="width:140px; object-fit: cover;"></a>
+    <a href="https://www.ulster.ac.uk"><img src="images/uulogo.png" style="width:80px; object-fit: cover;"></a>
+    <a href="https://www.ulster.ac.uk/research/topic/computer-science/intelligent-systems-research-centre"><img src="images/isrc.png" style="width:100px; object-fit: cover;"></a>
+    <a href="https://www.bristol.ac.uk"><img src="images/bristollogo.png" style="width:90px; object-fit: cover;"></a>
+    <a href="https://www.qub.ac.uk"><img src="images/qublogo.png" style="width:90px; object-fit: cover;"></a> -->
+    
+  </div>
+
+ 
+
+  <script>
+function openTab(evt, tabId) {
+  const tab = document.getElementById(tabId);
+  const isActive = tab.classList.contains("active");
+
+  // Close all tabs
+  document.querySelectorAll(".tab-content").forEach(t => {
+    t.classList.remove("active");
+  });
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  // If it was NOT active, open it
+  if (!isActive) {
+    tab.classList.add("active");
+    evt.currentTarget.classList.add("active");
+  }
+}
+
+const canvas = document.getElementById("mesh");
+const ctx = canvas.getContext("2d");
+
+let w, h, points;
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+
+  points = Array.from({ length: 80 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.2,
+    vy: (Math.random() - 0.5) * 0.2
+  }));
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+function step() {
+  ctx.clearRect(0, 0, w, h);
+
+  // move points
+  points.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if (p.x < 0 || p.x > w) p.vx *= -1;
+    if (p.y < 0 || p.y > h) p.vy *= -1;
+  });
+
+  // draw edges (local graph)
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const dx = points[i].x - points[j].x;
+      const dy = points[i].y - points[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[j].x, points[j].y);
+        ctx.strokeStyle = "rgba(0,0,0,0.15)";
+        ctx.stroke();
+      }
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+step();
+</script>
+
+</body>
+</html>
