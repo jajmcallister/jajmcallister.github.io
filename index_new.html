@@ -299,7 +299,7 @@
 
       border: 1px solid transparent;
 
-      background: var(--bg);
+      background: transparent;
 
       cursor: pointer;
 
@@ -376,52 +376,33 @@
       transition: opacity 0.25s ease;
     }
 
-
-    /* =========================================================
-       DARK MODE BUTTON
-       ========================================================= */
-
     #theme-toggle {
-      position: fixed;
+  margin-left: auto;
 
-      top: 14px;
-      right: 14px;
+  padding: 8px 12px;
 
-      width: 28px;
-      height: 28px;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
 
-      padding: 0;
-      margin: 0;
+  background: transparent;
+  color: var(--secondary-text);
 
-      border: 1px solid var(--border);
-      border-radius: 50%;
+  cursor: pointer;
 
-      background: var(--panel);
-      color: var(--secondary-text);
+  font-size: 15px;
+  line-height: 1;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
 
-      font-size: 15px;
-      line-height: 1;
+#theme-toggle:hover {
+  background-color: var(--button-hover);
+  color: var(--text);
+}
 
-      cursor: pointer;
-
-      z-index: 1000;
-
-      transition:
-        background-color 0.25s ease,
-        border-color 0.25s ease,
-        color 0.25s ease,
-        transform 0.15s ease;
-    }
-
-    #theme-toggle:hover {
-      border-color: var(--text);
-      color: var(--text);
-      transform: scale(1.08);
-    }
 
 
   </style>
@@ -437,12 +418,12 @@
        DARK MODE BUTTON
        ======================================================= -->
 
-  <button
+  <!-- <button
     id="theme-toggle"
     aria-label="Toggle dark mode"
     title="Toggle dark mode">
     ☾
-  </button>
+  </button> -->
 
 
   <!-- Google Tag Manager (noscript) -->
@@ -531,6 +512,13 @@
       onclick="openTab(event, 'teaching')">
       Teaching
     </button>
+
+    <button
+    id="theme-toggle"
+    aria-label="Toggle dark mode"
+    title="Switch to dark mode">
+    Switch ☾
+  </button>
 
   </div>
 
@@ -1039,60 +1027,6 @@
 
 
   <!-- =======================================================
-       GROUP
-       ======================================================= -->
-
-  <!-- <h3><u>Group</u></h3>
-
-
-  <div class="text-container">
-
-    <p>
-      I am in the
-      <a href="https://www.sfwneuro.com/" style="color: #555; text-decoration: none;">
-        Cognition, Anatomy & Neural Networks (CANN)
-      </a>
-      research group, shared between Trinity and Oxford.
-    </p>
-
-  </div> -->
-
-
-  <!--
-  <p><i>Past and present:</i></p>
-
-  <div style="display: flex; gap: 12px; align-items: center;">
-
-    <a href="https://www.tcd.ie/">
-      <img src="images/tcdlogo.png"
-           style="width:140px; object-fit: cover;">
-    </a>
-
-    <a href="https://www.ulster.ac.uk">
-      <img src="images/uulogo.png"
-           style="width:80px; object-fit: cover;">
-    </a>
-
-    <a href="https://www.ulster.ac.uk/research/topic/computer-science/intelligent-systems-research-centre">
-      <img src="images/isrc.png"
-           style="width:100px; object-fit: cover;">
-    </a>
-
-    <a href="https://www.bristol.ac.uk">
-      <img src="images/bristollogo.png"
-           style="width:90px; object-fit: cover;">
-    </a>
-
-    <a href="https://www.qub.ac.uk">
-      <img src="images/qublogo.png"
-           style="width:90px; object-fit: cover;">
-    </a>
-
-  </div>
-  -->
-
-
-  <!-- =======================================================
        JAVASCRIPT
        ======================================================= -->
 
@@ -1162,7 +1096,7 @@
        */
 
       themeToggle.textContent =
-        dark ? "☀" : "☾";
+        dark ? "Switch ☀" : "Switch ☾";
 
 
       themeToggle.setAttribute(
