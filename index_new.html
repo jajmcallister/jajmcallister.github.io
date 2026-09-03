@@ -1057,6 +1057,12 @@
   </div>
 
 
+    <br>
+  <div id="campanile" style="text-align: center;">
+    <img src="images/tcd_bg.png" alt="Trinity College Campanile" style="width: 99%;">
+  </div>
+
+
   <!-- =======================================================
        JAVASCRIPT
        ======================================================= -->
@@ -1100,6 +1106,14 @@
         evt.currentTarget.classList.add("active");
 
       }
+
+      // Hide the campanile while any tab is open; show it when none are
+
+      const anyOpen =
+        document.querySelector(".tab-content.active") !== null;
+
+      document.getElementById("campanile").style.display =
+        anyOpen ? "none" : "block";
 
     }
 
